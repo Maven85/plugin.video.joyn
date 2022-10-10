@@ -47,7 +47,7 @@ def get_url(url,
 
 	if xbmc_helper().get_bool_setting('debug_requests') is True:
 		xbmc_helper().log_debug(
-		        'get_url - url: {} headers {} query {} post {} no_cache {} silent {} request_hash {} return_json_errors {}, cookie_file',
+		        'get_url - url: {} headers {} query {} post {} no_cache {} silent {} request_hash {} return_json_errors {}, cookie_file {}',
 		        url, additional_headers, additional_query_string, post_data, no_cache, fail_silent, request_hash, return_json_errors,
 		        cookie_file)
 

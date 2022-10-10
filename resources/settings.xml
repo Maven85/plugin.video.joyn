@@ -702,13 +702,6 @@
 					</control>
 				</setting>
 			</group>
-			<group id="8">
-				<setting id="force_legacy_login" type="boolean" label="30144" help="">
-					<level>0</level>
-					<default>false</default>
-					<control type="toggle"/>
-				</setting>
-			</group>
 		</category>
 	</section>
 </settings>

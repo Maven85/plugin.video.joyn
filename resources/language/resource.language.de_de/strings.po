@@ -210,10 +210,6 @@ msgctxt "#30143"
 msgid "Livestream offset (in seconds)"
 msgstr "Verzögerung des Livestreams (in Sekunden)"
 
-msgctxt "#30144"
-msgid "Force legacy login method"
-msgstr "Alte Anmelde-Methode erzwingen"
-
 #empty strings from id 30144 to 30229
 # SETTINGS-TITLES
 

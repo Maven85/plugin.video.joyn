@@ -5,6 +5,7 @@ from sys import exit
 from datetime import datetime
 from time import time
 from copy import copy, deepcopy
+from requests import session
 from xbmc import sleep as xbmc_sleep
 from .external.singleton import Singleton
 from .const import CONST
@@ -406,150 +407,66 @@ class lib_joyn(Singleton):
 	                   is_retry=False,
 	                   logout=False,
 	                   force_refresh=False,
-	                   force_reload_cache=False,
-	                   do_legacy_login=False):
+	                   force_reload_cache=False):
 
 		if username is not None and password is not None:
 			try:
-				client_ids = self.get_client_ids(username, password)
+				h = {"user-agent": self.config.get('USER_AGENT')}
+				client_id = self.get_client_ids(username, password).get('client_id')
+				t = session()
 
-				if do_legacy_login is False and xbmc_helper().get_bool_setting('force_legacy_login') is False:
-					sso_resp = request_helper.get_json_response(url=CONST.get('SSO_AUTH_URL'),
-					                                            config=self.config,
-					                                            params={
-					                                                    'client_id': client_ids.get('client_id'),
-					                                                    'client_name': client_ids.get('client_name'),
-					                                            },
-					                                            no_cache=True)
-					if isinstance(sso_resp, dict) and 'web-login' in sso_resp.keys() and sso_resp.get('web-login').startswith(
-					        'http') and 'redeem-token' in sso_resp.keys() and sso_resp.get('redeem-token').startswith('http'):
-						web_login_query_dict = parse_qs(urlparse(sso_resp.get('web-login')).query)
+				# GET REQUEST ID
+				a = t.get(f"https://auth.joyn.de/sso/endpoints?client_id={client_id}&client_name=web", headers=h)
+				endpoints = a.json()
+				a = t.get(endpoints["web-login"], allow_redirects=True)
+				request_id = a.url.split("requestId=")[1]
+				h.update({"content-type": "application/json"})
 
-						if 'client_id' not in web_login_query_dict.keys():
-							return self.get_auth_token(username=username,
-							                           password=password,
-							                           reset_anon=reset_anon,
-							                           is_retry=is_retry,
-							                           logout=logout,
-							                           force_refresh=force_refresh,
-							                           force_reload_cache=force_reload_cache,
-							                           do_legacy_login=True)
+				# CHECK LANG
+				d = dumps({"acceptlanguage": "undefined", "requestId": request_id})
+				a = t.post("https://auth.7pass.de/registration-setup-srv/public/list?acceptlanguage=undefined&requestId={request_id}")
 
-						cookie_file = xbmc_helper().set_data(filename=compat._format('{}.cookie.tmp',
-						                                                             sha512(str(time()).encode('utf-8')).hexdigest()),
-						                                     data='',
-						                                     dir_type='TEMP_DIR')
-						xbmc_helper().log_debug("Created empty cookie file: {}", cookie_file)
-						login_url, login_response = request_helper.get_url(url=sso_resp.get('web-login'),
-						                                                   config=self.config,
-						                                                   additional_query_string={
-						                                                           'redirect_uri': CONST.get('OAUTH_URL'),
-						                                                           'state': '%2F',
-						                                                   },
-						                                                   cookie_file=cookie_file,
-						                                                   return_final_url=True)
+				# CHECK MAIL ADDRESS
+				d = dumps({"email": username, "requestId": request_id})
+				a = t.post(f"https://auth.7pass.de/users-srv/user/checkexists/{request_id}", headers=h, data=d)
 
-						csrf_param, csrf_token = self.extractCrsf(login_response)
-						if csrf_param is not None and csrf_token is not None:
-							params = {csrf_param: csrf_token, 'account[email]': username, 'remember': 'on'}
-							login_res_url, login_res_response = request_helper.get_url(url=login_url,
-							                                                           config=self.config,
-							                                                           post_data=params,
-							                                                           cookie_file=cookie_file,
-							                                                           return_final_url=True,
-							                                                           no_cache=True)
+				# CHECK LIST
+				a = t.post(f"https://auth.7pass.de/verification-srv/v2/setup/public/configured/list")
 
-							csrf_param, csrf_token = self.extractCrsf(login_response)
+				# SEND PASSWORD
+				h.update({"content-type": "application/x-www-form-urlencoded"})
+				d = f"username={username}&requestId={request_id}&password={password}"
+				a = t.post(f"https://auth.7pass.de/login-srv/login", headers=h, data=d, allow_redirects=True)
 
-						if csrf_param is not None and csrf_token is not None:
-							params = {csrf_param: csrf_token, 'account[email]': username, 'password': password}
-							login_res_url, login_res_response = request_helper.get_url(url=login_res_url,
-							                                                           config=self.config,
-							                                                           post_data=params,
-							                                                           cookie_file=cookie_file,
-							                                                           return_final_url=True,
-							                                                           no_cache=True)
+				# RETRIEVE IDs
+				id = a.url.split("?")[1].split("&")
+				id_dict = dict()
+				for i in id:
+					b = i.split("=")
+					id_dict[b[0]] = b[1]
 
-							csrf_param, csrf_token = self.extractCrsf(login_response)
+				# PREFLIGHTS
+				h.update({"content-type": "application/json"})
+				d = dumps({"sub": id_dict["sub"], "client_id": id_dict["client_id"], "scopes": [{"offline_access": "denied"}]})
+				a = t.post("https://auth.7pass.de/consent-management-srv/consent/scope/accept", data=d, headers=h)
+				a = t.get(f"https://auth.7pass.de/token-srv/prelogin/metadata/{id_dict['track_id']}?acceptLanguage=de-de")
 
-						if csrf_param is not None and csrf_token is not None:
-							params = {csrf_param: csrf_token}
-							login_res_url, login_res_response = request_helper.get_url(url=login_res_url,
-							                                                           config=self.config,
-							                                                           post_data=params,
-							                                                           cookie_file=cookie_file,
-							                                                           return_final_url=True,
-							                                                           no_cache=True)
+				# CONTINUE
+				h.update({"content-type": "application/x-www-form-urlencoded"})
+				a = t.post(f"https://auth.7pass.de/login-srv/precheck/continue/{id_dict['track_id']}", headers=h, data="", allow_redirects=True)
 
-							login_res_parsed = urlparse(login_res_url)
-							login_res_url, login_res_response = request_helper.get_url(url=sso_resp.get('web-login')[:sso_resp.get('web-login').find('?')] + '/' + login_res_parsed.path.split('/')[1],
-							                                                           config=self.config,
-							                                                           cookie_file=cookie_file,
-							                                                           return_final_url=True,
-							                                                           no_cache=True)
+				# RETRIEVE ID PT.2
+				id = a.url.split("?")[1].split("&")
+				id_dict_2 = dict()
+				for i in id:
+					b = i.split("=")
+					id_dict_2[b[0]] = b[1]
 
-							xbmc_helper().del_data(cookie_file, 'TEMP_DIR')
-
-							# login failed
-							if login_res_url == login_url:
-								xbmc_helper().log_notice('Login failed - url: {}', login_res_url)
-								return False
-
-							login_res_parsed = urlparse(login_res_url)
-							login_res_query_dict = parse_qs(login_res_parsed.query)
-							xbmc_helper().log_debug("LOGIN RESULT: {} {}", login_res_parsed, login_res_query_dict)
-							token_req_params = {
-							        'code': login_res_query_dict.get('code')[0],
-							        'client_id': web_login_query_dict.get('client_id')[0],
-							        'redirect_uri': compat._format('{}://{}{}', login_res_parsed.scheme, login_res_parsed.netloc,
-							                                       login_res_parsed.path),
-							        'tracking_id': client_ids.get('client_id'),
-							        'tracking_name': client_ids.get('client_name')
-							}
-
-							auth_token_data = request_helper.post_json(url=sso_resp.get('redeem-token'),
-							                                           config=self.config,
-							                                           data=token_req_params,
-							                                           no_cache=True,
-							                                           return_json_errors='UNAUTHORIZED')
-
-						if csrf_param is None and csrf_token is None:
-							xbmc_helper().log_error("Could not find required csrf login parameters - response was: {} - retrying with legacy login",
-							                        login_response)
-							xbmc_helper().del_data(cookie_file, 'TEMP_DIR')
-							return self.get_auth_token(username=username,
-							                           password=password,
-							                           reset_anon=reset_anon,
-							                           is_retry=is_retry,
-							                           logout=logout,
-							                           force_refresh=force_refresh,
-							                           force_reload_cache=force_reload_cache,
-							                           do_legacy_login=True)
-					else:
-						xbmc_helper().log_error('Failed to retrieve required sso auth parameters - response was: {} - retrying with legacy login',
-						                        sso_resp)
-						return self.get_auth_token(username=username,
-						                           password=password,
-						                           reset_anon=reset_anon,
-						                           is_retry=is_retry,
-						                           logout=logout,
-						                           force_refresh=force_refresh,
-						                           force_reload_cache=force_reload_cache,
-						                           do_legacy_login=True)
-
-				else:
-					xbmc_helper().log_notice('Using legacy login')
-
-					auth_token_data = request_helper.post_json(url=compat._format('{}{}', CONST.get('AUTH_URL'), CONST.get('AUTH_LOGIN')),
-					                                           config=self.config,
-					                                           data=client_ids,
-					                                           no_cache=True,
-					                                           return_json_errors='UNAUTHORIZED')
-
-				if isinstance(auth_token_data, dict) and 'json_errors' in auth_token_data.keys():
-					if 'UNAUTHORIZED' in auth_token_data['json_errors']:
-						xbmc_helper().log_debug('Failed to log in')
-						return False
+				# GENERATE TOKEN
+				h.update({"content-type": "application/json"})
+				d = dumps({"client_id": id_dict["client_id"], "code": id_dict_2["code"], "code_verifier": "", "redirect_uri": "https://www.joyn.de/oauth", "tracking_id": id_dict["track_id"], "tracking_name": "web"})
+				a = t.post(endpoints["redeem-token"], headers=h, data=d)
+				auth_token_data = a.json()
 
 				xbmc_helper().log_debug('Successfully logged in an retrieved auth token')
 				auth_token_data.update({
@@ -561,7 +478,7 @@ class lib_joyn(Singleton):
 
 				self.auth_token_data = auth_token_data
 				cache.remove_json('EPG')
-				self.landingpage = None
+				self.landingpage = {}
 				self.epg_cache = None
 
 			except Exception as e:
@@ -587,7 +504,7 @@ class lib_joyn(Singleton):
 			if reset_anon is True:
 				cache.remove_json('ACCOUNT_INFO')
 				cache.remove_json('EPG')
-				self.landingpage = None
+				self.landingpage = {}
 				self.epg_cache = None
 
 		# refresh the token at least 30min before it actual expires
@@ -597,6 +514,7 @@ class lib_joyn(Singleton):
 
 			refresh_auth_token_req_data = {
 			        'refresh_token': self.auth_token_data['refresh_token'],
+			        'grant_type': self.auth_token_data['token_type'],
 			        'client_id': client_id_data['client_id'],
 			        'client_name': client_id_data['client_name'],
 			}
