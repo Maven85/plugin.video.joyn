@@ -416,7 +416,7 @@ class lib_joyn(Singleton):
 				t = session()
 
 				# GET REQUEST ID
-				a = t.get(f"https://auth.joyn.de/sso/endpoints?client_id={client_id}&client_name=web", headers=h)
+				a = t.get(compat._format("https://auth.joyn.de/sso/endpoints?client_id={}&client_name=web", client_id), headers=h)
 				endpoints = a.json()
 				a = t.get(endpoints["web-login"], allow_redirects=True)
 				request_id = a.url.split("requestId=")[1]
@@ -424,21 +424,22 @@ class lib_joyn(Singleton):
 
 				# CHECK LANG
 				d = dumps({"acceptlanguage": "undefined", "requestId": request_id})
-				a = t.post("https://auth.7pass.de/registration-setup-srv/public/list?acceptlanguage=undefined&requestId={request_id}")
+				a = t.post(compat._format("https://auth.7pass.de/registration-setup-srv/public/list?acceptlanguage=undefined&requestId={}", request_id))
 
 				# CHECK MAIL ADDRESS
 				d = dumps({"email": username, "requestId": request_id})
-				a = t.post(f"https://auth.7pass.de/users-srv/user/checkexists/{request_id}", headers=h, data=d)
+				a = t.post(compat._format("https://auth.7pass.de/users-srv/user/checkexists/{}", request_id), headers=h, data=d)
 
 				# CHECK LIST
-				a = t.post(f"https://auth.7pass.de/verification-srv/v2/setup/public/configured/list")
+				a = t.post("https://auth.7pass.de/verification-srv/v2/setup/public/configured/list")
 
 				# SEND PASSWORD
 				h.update({"content-type": "application/x-www-form-urlencoded"})
-				d = f"username={username}&requestId={request_id}&password={password}"
-				a = t.post(f"https://auth.7pass.de/login-srv/login", headers=h, data=d, allow_redirects=True)
+				d = compat._format("username={}&requestId={}&password={}", username, request_id, password)
+				a = t.post("https://auth.7pass.de/login-srv/login", headers=h, data=d, allow_redirects=True)
 
 				# RETRIEVE IDs
+				xbmc_helper().log_debug('url = {}', a.url)
 				id = a.url.split("?")[1].split("&")
 				id_dict = dict()
 				for i in id:
@@ -449,11 +450,11 @@ class lib_joyn(Singleton):
 				h.update({"content-type": "application/json"})
 				d = dumps({"sub": id_dict["sub"], "client_id": id_dict["client_id"], "scopes": [{"offline_access": "denied"}]})
 				a = t.post("https://auth.7pass.de/consent-management-srv/consent/scope/accept", data=d, headers=h)
-				a = t.get(f"https://auth.7pass.de/token-srv/prelogin/metadata/{id_dict['track_id']}?acceptLanguage=de-de")
+				a = t.get(compat._format("https://auth.7pass.de/token-srv/prelogin/metadata/{}?acceptLanguage=de-de", id_dict['track_id']))
 
 				# CONTINUE
 				h.update({"content-type": "application/x-www-form-urlencoded"})
-				a = t.post(f"https://auth.7pass.de/login-srv/precheck/continue/{id_dict['track_id']}", headers=h, data="", allow_redirects=True)
+				a = t.post(compat._format("https://auth.7pass.de/login-srv/precheck/continue/{}", id_dict['track_id']), headers=h, data="", allow_redirects=True)
 
 				# RETRIEVE ID PT.2
 				id = a.url.split("?")[1].split("&")
