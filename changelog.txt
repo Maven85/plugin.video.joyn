@@ -1,9 +1,11 @@
+2.5.12
+- fixed login (thanks easy4me again)
 2.5.11
 - fixed login for kodi 18 and 19
 2.5.10
 - added missing import
 2.5.9
-- fixed login (thanks @easy4me)
+- fixed login (thanks easy4me)
 2.5.8
 - updated operation hashes
 2.5.7
