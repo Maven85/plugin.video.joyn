@@ -415,14 +415,23 @@ class lib_joyn(Singleton):
 				client_id = self.get_client_ids(username, password).get('client_id')
 				t = session()
 
-				# GET REQUEST ID
+				# ENDPOINTS
 				a = t.get(compat._format("https://auth.joyn.de/sso/endpoints?client_id={}&client_name=web", client_id), headers=h)
 				endpoints = a.json()
+
+				# RETRIEVE IDs
+				id = endpoints["web-login"].split("?")[1].split("&")
+				id_dict = dict()
+				for i in id:
+					b = i.split("=")
+					id_dict[b[0]] = b[1]
+
+				# GET REQUEST ID
 				a = t.get(endpoints["web-login"], allow_redirects=True)
 				request_id = a.url.split("requestId=")[1]
-				h.update({"content-type": "application/json"})
 
 				# CHECK LANG
+				h.update({"content-type": "application/json"})
 				d = dumps({"acceptlanguage": "undefined", "requestId": request_id})
 				a = t.post(compat._format("https://auth.7pass.de/registration-setup-srv/public/list?acceptlanguage=undefined&requestId={}", request_id))
 
@@ -439,33 +448,18 @@ class lib_joyn(Singleton):
 				a = t.post("https://auth.7pass.de/login-srv/login", headers=h, data=d, allow_redirects=True)
 
 				# RETRIEVE IDs
-				xbmc_helper().log_debug('url = {}', a.url)
-				id = a.url.split("?")[1].split("&")
-				id_dict = dict()
-				for i in id:
-					b = i.split("=")
-					id_dict[b[0]] = b[1]
-
-				# PREFLIGHTS
-				h.update({"content-type": "application/json"})
-				d = dumps({"sub": id_dict["sub"], "client_id": id_dict["client_id"], "scopes": [{"offline_access": "denied"}]})
-				a = t.post("https://auth.7pass.de/consent-management-srv/consent/scope/accept", data=d, headers=h)
-				a = t.get(compat._format("https://auth.7pass.de/token-srv/prelogin/metadata/{}?acceptLanguage=de-de", id_dict['track_id']))
-
-				# CONTINUE
-				h.update({"content-type": "application/x-www-form-urlencoded"})
-				a = t.post(compat._format("https://auth.7pass.de/login-srv/precheck/continue/{}", id_dict['track_id']), headers=h, data="", allow_redirects=True)
-
-				# RETRIEVE ID PT.2
 				id = a.url.split("?")[1].split("&")
 				id_dict_2 = dict()
 				for i in id:
 					b = i.split("=")
 					id_dict_2[b[0]] = b[1]
 
+				# PREFLIGHTS
+				a = t.get(compat._format("https://auth.7pass.de/token-srv/prelogin/metadata/{}?acceptLanguage=de-de", id_dict_2['cd1']))
+
 				# GENERATE TOKEN
 				h.update({"content-type": "application/json"})
-				d = dumps({"client_id": id_dict["client_id"], "code": id_dict_2["code"], "code_verifier": "", "redirect_uri": "https://www.joyn.de/oauth", "tracking_id": id_dict["track_id"], "tracking_name": "web"})
+				d = dumps({"client_id": id_dict["client_id"], "code": id_dict_2["code"], "code_verifier": "", "redirect_uri": "https://www.joyn.de/oauth", "tracking_id": id_dict_2["cd1"], "tracking_name": "web"})
 				a = t.post(endpoints["redeem-token"], headers=h, data=d)
 				auth_token_data = a.json()
 
