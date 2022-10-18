@@ -663,6 +663,7 @@ class lib_joyn(Singleton):
 	@staticmethod
 	def get_metadata(data, query_type, title_type_id=None):
 
+		obj_xbmc_helper = xbmc_helper()
 		metadata = {
 		        'art': {},
 		        'infoLabels': {},
@@ -677,19 +678,19 @@ class lib_joyn(Singleton):
 
 		if title_type_id is not None and 'title' in metadata['infoLabels'].keys():
 			metadata['infoLabels'].update(
-			        {'title': compat._format(self.xbmc_helper.translation('TITLE_LABEL'), metadata['infoLabels'].get('title', ''))})
+			        {'title': compat._format(obj_xbmc_helper.translation('TITLE_LABEL'), metadata['infoLabels'].get('title', ''))})
 
-		if self.xbmc_helper.get_bool_setting('highlight_premium') is True and isinstance(data.get('markings', None),
+		if obj_xbmc_helper.get_bool_setting('highlight_premium') is True and isinstance(data.get('markings', None),
 		                                                                              list) and 'PREMIUM' in data['markings']:
 			metadata['infoLabels'].update({
 			        'title':
-			        compat._format(self.xbmc_helper.translation('PLUS_HIGHLIGHT_LABEL'), metadata['infoLabels'].get('title', ''))
+			        compat._format(obj_xbmc_helper.translation('PLUS_HIGHLIGHT_LABEL'), metadata['infoLabels'].get('title', ''))
 			})
 
 		if data.get('isBookmarked', None) is not None:
 			if data.get('isBookmarked', False) is True:
 				metadata['infoLabels'].update(
-				        {'title': compat._format(self.xbmc_helper.translation('JOYN_BOOKMARK_LABEL'), metadata['infoLabels']['title'])})
+				        {'title': compat._format(obj_xbmc_helper.translation('JOYN_BOOKMARK_LABEL'), metadata['infoLabels']['title'])})
 				metadata['is_bookmarked'] = True
 			else:
 				metadata['is_bookmarked'] = False
@@ -732,7 +733,7 @@ class lib_joyn(Singleton):
 			age_rating = data.get('season').get('ageRating').get('minAge')
 
 		if age_rating is not None:
-			metadata['infoLabels'].update({'mpaa': compat._format(self.xbmc_helper.translation('MIN_AGE'), str(age_rating))})
+			metadata['infoLabels'].update({'mpaa': compat._format(obj_xbmc_helper.translation('MIN_AGE'), str(age_rating))})
 
 		if 'genres' in data.keys() and isinstance(data['genres'], list):
 			metadata['infoLabels'].update({'genre': []})
@@ -771,11 +772,11 @@ class lib_joyn(Singleton):
 
 		if query_type == 'EPISODE':
 			if 'endsAt' in data.keys() and data['endsAt'] is not None and data['endsAt'] < 9999999999:
-				endsAt = self.xbmc_helper.timestamp_to_datetime(data['endsAt'])
+				endsAt = obj_xbmc_helper.timestamp_to_datetime(data['endsAt'])
 				if endsAt is not False:
 					metadata['infoLabels'].update({
 					        'plot':
-					        compat._format('{}{}', compat._format(self.xbmc_helper.translation('VIDEO_AVAILABLE'), endsAt),
+					        compat._format('{}{}', compat._format(obj_xbmc_helper.translation('VIDEO_AVAILABLE'), endsAt),
 					                       metadata['infoLabels'].get('plot', ''))
 					})
 
@@ -792,7 +793,7 @@ class lib_joyn(Singleton):
 					metadata['art'].update({'clearlogo': series_meta['art']['clearlogo']})
 
 		if 'airdate' in data.keys() and data['airdate'] is not None:
-			broadcast_datetime = self.xbmc_helper.timestamp_to_datetime(data['airdate'])
+			broadcast_datetime = obj_xbmc_helper.timestamp_to_datetime(data['airdate'])
 			if broadcast_datetime is not False:
 				broadcast_date = broadcast_datetime.strftime('%Y-%m-%d')
 				metadata['infoLabels'].update({
@@ -825,6 +826,7 @@ class lib_joyn(Singleton):
 	@staticmethod
 	def get_epg_metadata(brand_livestream_epg):
 
+		obj_xbmc_helper = xbmc_helper()
 		epg_metadata = {
 		        'art': {},
 		        'infoLabels': {},
@@ -837,7 +839,7 @@ class lib_joyn(Singleton):
 		if 'quality' in brand_livestream_epg and brand_livestream_epg['quality'] == 'HD' and brand_title[-2:] != 'HD':
 			brand_title = compat._format('{} HD', brand_title)
 		dt_now = datetime.now()
-		epg_metadata['infoLabels'].update({'title': compat._format(self.xbmc_helper.translation('LIVETV_TITLE'), brand_title, '')})
+		epg_metadata['infoLabels'].update({'title': compat._format(obj_xbmc_helper.translation('LIVETV_TITLE'), brand_title, '')})
 
 		if 'epg' in brand_livestream_epg:
 			epg_data = brand_livestream_epg['epg']
@@ -845,13 +847,13 @@ class lib_joyn(Singleton):
 			epg_data = [brand_livestream_epg]
 
 		for idx, epg_entry in enumerate(epg_data):
-			end_time = self.xbmc_helper.timestamp_to_datetime(epg_entry['endDate'])
+			end_time = obj_xbmc_helper.timestamp_to_datetime(epg_entry['endDate'])
 
 			if end_time is not False and end_time > dt_now:
 				epg_metadata = lib_joyn.get_metadata(epg_entry, 'EPG')
 				epg_metadata['infoLabels'].update({
 				        'title':
-				        compat._format(self.xbmc_helper.translation('LIVETV_TITLE'), brand_title, epg_entry['title']),
+				        compat._format(obj_xbmc_helper.translation('LIVETV_TITLE'), brand_title, epg_entry['title']),
 				        'tvShowTitle':
 				        epg_entry['title'],
 				        'mediatype':
@@ -860,11 +862,11 @@ class lib_joyn(Singleton):
 				if len(epg_data) > (idx + 1):
 					epg_metadata['infoLabels'].update({
 					        'plot':
-					        compat._format(self.xbmc_helper.translation('LIVETV_UNTIL_AND_NEXT'), end_time,
+					        compat._format(obj_xbmc_helper.translation('LIVETV_UNTIL_AND_NEXT'), end_time,
 					                       epg_data[idx + 1]['title'])
 					})
 				else:
-					epg_metadata['infoLabels'].update({'plot': compat._format(self.xbmc_helper.translation('LIVETV_UNTIL'), end_time)})
+					epg_metadata['infoLabels'].update({'plot': compat._format(obj_xbmc_helper.translation('LIVETV_UNTIL'), end_time)})
 
 				if epg_entry.get('secondaryTitle', None) is not None:
 					epg_metadata['infoLabels']['plot'] += epg_entry['secondaryTitle']
