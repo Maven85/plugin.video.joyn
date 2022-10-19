@@ -1,3 +1,5 @@
+2.5.15
+- fixed sending empty post data with Python 2
 2.5.14
 - fixed reference error
 2.5.13
