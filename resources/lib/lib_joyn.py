@@ -501,7 +501,7 @@ class lib_joyn(Singleton):
 																	 id_dict['track_id'][0] if login_flow_exp == False else id_dict['cd1'][0]
 																	),
 												  config=self.config,
-												  method='POST',
+												  post_data='',
 												  cookie_file=cookie_file,
 												  return_final_url=True,
 												  no_cache=True)

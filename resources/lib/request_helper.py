@@ -30,7 +30,6 @@ elif compat.PY3:
 
 def get_url(url,
             config,
-            method='GET',
             additional_headers=None,
             additional_query_string=None,
             post_data=None,
@@ -48,8 +47,8 @@ def get_url(url,
 
     if xbmc_helper().get_bool_setting('debug_requests') is True:
         xbmc_helper().log_debug(
-                'get_url - url: {} method {} headers {} query {} post {} no_cache {} silent {} request_hash {} return_json_errors {}, cookie_file {}',
-                url, method, additional_headers, additional_query_string, post_data, no_cache, fail_silent, request_hash, return_json_errors,
+                'get_url - url: {} headers {} query {} post {} no_cache {} silent {} request_hash {} return_json_errors {}, cookie_file {}',
+                url, additional_headers, additional_query_string, post_data if post_data != '' else '""', no_cache, fail_silent, request_hash, return_json_errors,
                 cookie_file)
 
     if no_cache is True:
@@ -111,11 +110,8 @@ def get_url(url,
         elif cookie_processor is not None:
             install_opener(build_opener(cookie_processor))
 
-        if post_data is not None or method == 'POST':
-            if post_data:
-                request = Request(url, data=post_data.encode('utf-8'), headers=headers)
-            else:
-                request = Request(url, headers=headers, method='POST')
+        if post_data is not None:
+            request = Request(url, data=post_data.encode('utf-8'), headers=headers)
         else:
             request = Request(url, headers=headers)
 
@@ -210,10 +206,9 @@ def post_json(url,
     additional_headers.append(('Content-Type', 'application/json'))
     return get_json_response(url=url,
                              config=config,
-                             method='POST',
                              headers=additional_headers,
                              params=additional_query_string,
-                             post_data=dumps(data) if data else None,
+                             post_data=dumps(data),
                              no_cache=no_cache,
                              silent=silent,
                              return_json_errors=return_json_errors,
@@ -222,7 +217,6 @@ def post_json(url,
 
 def get_json_response(url,
                       config,
-                      method='GET',
                       headers=[],
                       params=None,
                       post_data=None,
@@ -236,7 +230,6 @@ def get_json_response(url,
         return loads(
                 get_url(url=url,
                         config=config,
-                        method=method,
                         additional_headers=headers,
                         additional_query_string=params,
                         post_data=post_data,
