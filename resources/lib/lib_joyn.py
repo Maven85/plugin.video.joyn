@@ -31,9 +31,8 @@ class lib_joyn(Singleton):
 
 
 	def __init__(self):
-		self.xbmc_helper = xbmc_helper()
-		self.xbmc_helper.log_debug('libjoyn init')
-		self.default_icon = self.xbmc_helper.get_addon().getAddonInfo('icon')
+		xbmc_helper().log_debug('libjoyn init')
+		self.default_icon = xbmc_helper().get_addon().getAddonInfo('icon')
 		self.config = lib_joyn.get_config()
 		self.auth_token_data = None
 		self.account_info = None
@@ -61,15 +60,15 @@ class lib_joyn(Singleton):
 			if cached_epg['data'] is not None and cached_epg['is_expired'] is False and 'epg_expires' in cached_epg['data'].keys(
 			) and datetime.fromtimestamp(cached_epg['data']['epg_expires']) > dt_now:
 
-				self.xbmc_helper.log_debug('EPG FROM CACHE')
+				xbmc_helper().log_debug('EPG FROM CACHE')
 				return cached_epg['data']['epg_data']
 
 		elif self.epg_cache is not None and 'epg_cache_expires' in self.epg_cache.keys() and datetime.fromtimestamp(
 		        self.epg_cache['epg_cache_expires']) > dt_now:
-			self.xbmc_helper.log_debug('EPG FROM CLASS CACHE')
+			xbmc_helper().log_debug('EPG FROM CLASS CACHE')
 			return self.epg_cache['epg_data']
 
-		self.xbmc_helper.log_debug('EPG FROM API')
+		xbmc_helper().log_debug('EPG FROM API')
 		epg_data = self.get_graphql_response(operation='EPG',
 		                                     variables={'first': first},
 		                                     force_cache=False if use_cache is True else True)
@@ -96,9 +95,9 @@ class lib_joyn(Singleton):
 					        'endDate':
 					        int(time()) + 36000,
 					        'title':
-					        compat._format(self.xbmc_helper.translation('NO_INFORMATION_AVAILABLE')),
+					        compat._format(xbmc_helper().translation('NO_INFORMATION_AVAILABLE')),
 					        'secondaryTitle':
-					        compat._format(self.xbmc_helper.translation('NO_INFORMATION_AVAILABLE'))
+					        compat._format(xbmc_helper().translation('NO_INFORMATION_AVAILABLE'))
 					})
 		if use_cache is True:
 			cache.set_pickle('EPG', epg)
@@ -151,7 +150,7 @@ class lib_joyn(Singleton):
 
 	def get_license_filter(self, default='ALL'):
 
-		if self.xbmc_helper.get_bool_setting('always_show_premium') is not True:
+		if xbmc_helper().get_bool_setting('always_show_premium') is not True:
 			for license_filter_cond, license_filter_value in CONST['LICENSE_FILTER'].items():
 				if self.get_account_subscription_config(license_filter_cond) is False:
 					return license_filter_value
@@ -162,9 +161,9 @@ class lib_joyn(Singleton):
 
 		license_types = asset_data.get('licenseTypes', [])
 		markings = asset_data.get('markings', [])
-		self.xbmc_helper.log_debug('check_license: {} types {} markings {}', asset_data.get('title', ''), license_types, markings)
+		xbmc_helper().log_debug('check_license: {} types {} markings {}', asset_data.get('title', ''), license_types, markings)
 
-		if respect_setting is True and self.xbmc_helper.get_bool_setting('always_show_premium') is True:
+		if respect_setting is True and xbmc_helper().get_bool_setting('always_show_premium') is True:
 			return True
 
 		if len(license_types) > 0:
@@ -268,7 +267,7 @@ class lib_joyn(Singleton):
 
 	def get_graphql_response(self, operation, variables={}, retry_count=0, force_refresh_auth=False, force_cache=False):
 
-		self.xbmc_helper.log_debug('get_graphql_response: Operation: {}', operation)
+		xbmc_helper().log_debug('get_graphql_response: Operation: {}', operation)
 
 		if isinstance(CONST['GRAPHQL'][operation].get('REQUIRED_VARIABLES', None), list):
 			for required_var in CONST['GRAPHQL'][operation]['REQUIRED_VARIABLES']:
@@ -276,7 +275,7 @@ class lib_joyn(Singleton):
 					if required_var in CONST['GRAPHQL']['STATIC_VARIABLES'].keys():
 						variables.update({required_var: CONST['GRAPHQL']['STATIC_VARIABLES'][required_var]})
 					else:
-						self.xbmc_helper.log_error('Not all required variables set for operation {} required var {} set vars{}', operation,
+						xbmc_helper().log_error('Not all required variables set for operation {} required var {} set vars{}', operation,
 						                        required_var, variables)
 						exit(0)
 
@@ -356,24 +355,24 @@ class lib_joyn(Singleton):
 					self.get_graphql_response(operation=operation, variables=variables, retry_count=retry_count, force_refresh_auth=True)
 
 		except Exception as e:
-			self.xbmc_helper.log_error('Could not complete graphql request: {} params {}', e, params)
+			xbmc_helper().log_error('Could not complete graphql request: {} params {}', e, params)
 
 		if isinstance(api_response, dict) and 'errors' in api_response.keys():
-			self.xbmc_helper.log_error('GraphQL query returned errors: {} params {}', api_response['errors'], params)
+			xbmc_helper().log_error('GraphQL query returned errors: {} params {}', api_response['errors'], params)
 
 		if isinstance(api_response, dict) and 'data' in api_response.keys() and api_response['data'] is not None:
 			return api_response['data']
 		else:
-			self.xbmc_helper.log_error('GraphQL query returned no data - response: {} params {}', api_response, params)
+			xbmc_helper().log_error('GraphQL query returned no data - response: {} params {}', api_response, params)
 
 			if retry_count < 3:
-				self.xbmc_helper.log_error('Retrying to complete graphql request ... retry count: {}', retry_count)
+				xbmc_helper().log_error('Retrying to complete graphql request ... retry count: {}', retry_count)
 				xbmc_sleep(500)
 				return self.get_graphql_response(operation=operation, variables=variables, retry_count=(retry_count + 1))
 			else:
-				self.xbmc_helper.notification(
-				        compat._format(self.xbmc_helper.translation('ERROR'), 'GraphQL'),
-				        self.xbmc_helper.translation('MSG_GAPHQL_ERROR'),
+				xbmc_helper().notification(
+				        compat._format(xbmc_helper().translation('ERROR'), 'GraphQL'),
+				        xbmc_helper().translation('MSG_GAPHQL_ERROR'),
 				)
 				exit(0)
 
@@ -382,15 +381,15 @@ class lib_joyn(Singleton):
 
 		from .submodules.libjoyn_auth import get_device_uuid
 
-		client_id_data = self.xbmc_helper.get_json_data('client_ids')
+		client_id_data = xbmc_helper().get_json_data('client_ids')
 		if client_id_data is None or client_id_data.get('client_name', 'android') not in CONST['CLIENT_NAMES']:
 			client_id_data = {
 			        'anon_device_id': get_device_uuid(),
 			        'client_id': get_device_uuid(prefix='JOYNCLIENTID'),
 			        'client_name': self.config.get('CLIENT_NAME', 'web'),
 			}
-			self.xbmc_helper.log_debug('Created new client_id_data: {}', client_id_data)
-			self.xbmc_helper.set_json_data('client_ids', client_id_data)
+			xbmc_helper().log_debug('Created new client_id_data: {}', client_id_data)
+			xbmc_helper().set_json_data('client_ids', client_id_data)
 
 		if username is not None and password is not None:
 			del client_id_data['anon_device_id']
@@ -415,7 +414,7 @@ class lib_joyn(Singleton):
 
 			# GENERATE COOKIE
 			cookie_filename = compat._format('{}.cookie.tmp', sha512(str(time()).encode('utf-8')).hexdigest())
-			cookie_file = self.xbmc_helper.get_file_path(CONST['TEMP_DIR'], cookie_filename)
+			cookie_file = xbmc_helper().get_file_path(CONST['TEMP_DIR'], cookie_filename)
 			MozillaCookieJar(cookie_file).save()
 
 			try:
@@ -525,32 +524,32 @@ class lib_joyn(Singleton):
 														   cookie_file=cookie_file,
 														   no_cache=True)
 
-				self.xbmc_helper.log_debug('Successfully logged in an retrieved auth token')
+				xbmc_helper().log_debug('Successfully logged in an retrieved auth token')
 				auth_token_data.update({
 				        'created': int(time()),
 				        'has_account': True,
 				})
 
-				self.xbmc_helper.set_json_data('auth_tokens', auth_token_data)
+				xbmc_helper().set_json_data('auth_tokens', auth_token_data)
 
 				self.auth_token_data = auth_token_data
-				self.xbmc_helper.del_data(cookie_file, 'TEMP_DIR')
+				xbmc_helper().del_data(cookie_file, 'TEMP_DIR')
 				cache.remove_json('EPG')
 				self.landingpage = dict()
 				self.epg_cache = None
 
 			except Exception as e:
-				self.xbmc_helper.log_debug('Failed to log in - exception: {}', e)
-				self.xbmc_helper.del_data(cookie_file, 'TEMP_DIR')
+				xbmc_helper().log_debug('Failed to log in - exception: {}', e)
+				xbmc_helper().del_data(cookie_file, 'TEMP_DIR')
 				pass
 				return False
 
 		elif reset_anon is False:
 			if self.auth_token_data is None or force_reload_cache is True:
-				self.auth_token_data = self.xbmc_helper.get_json_data('auth_tokens')
+				self.auth_token_data = xbmc_helper().get_json_data('auth_tokens')
 
 		if reset_anon is True or self.auth_token_data is None:
-			self.xbmc_helper.log_debug("Creating new auth_token_data")
+			xbmc_helper().log_debug("Creating new auth_token_data")
 
 			auth_token_data = request_helper.post_json(url=compat._format('{}{}', CONST.get('AUTH_URL'), CONST.get('AUTH_ANON')),
 			                                           config=self.config,
@@ -558,7 +557,7 @@ class lib_joyn(Singleton):
 			                                           no_cache=True)
 
 			auth_token_data.update({'created': int(time())})
-			self.xbmc_helper.set_json_data('auth_tokens', auth_token_data)
+			xbmc_helper().set_json_data('auth_tokens', auth_token_data)
 			self.auth_token_data = auth_token_data
 			if reset_anon is True:
 				cache.remove_json('ACCOUNT_INFO')
@@ -568,7 +567,7 @@ class lib_joyn(Singleton):
 
 		# refresh the token at least 30min before it actual expires
 		if force_refresh is True or time() >= self.auth_token_data['created'] + ((self.auth_token_data['expires_in'] / 1000) - 1800):
-			self.xbmc_helper.log_debug("Refreshing auth_token_data")
+			xbmc_helper().log_debug("Refreshing auth_token_data")
 			client_id_data = self.get_client_ids()
 
 			refresh_auth_token_req_data = {
@@ -590,13 +589,13 @@ class lib_joyn(Singleton):
 					if 'VALIDATION_ERROR' in refresh_auth_token_data['json_errors']:
 						# ask to re-login
 						if self.auth_token_data.get('has_account', False) is True:
-							self.xbmc_helper.log_debug("ask to re-login")
+							xbmc_helper().log_debug("ask to re-login")
 
 							from .submodules.libjoyn_auth import login, get_auth_data
 							if not get_auth_data():
-								self.xbmc_helper.notification(compat._format(self.xbmc_helper.translation('ERROR'),
-								                                          self.xbmc_helper.translation('ACCOUNT')),
-								                           self.xbmc_helper.translation('MSG_RERESH_AUTH_FAILED_RELOG'))
+								xbmc_helper().notification(compat._format(xbmc_helper().translation('ERROR'),
+								                                          xbmc_helper().translation('ACCOUNT')),
+								                           xbmc_helper().translation('MSG_RERESH_AUTH_FAILED_RELOG'))
 
 							login(dont_check_account=True)
 							return self.get_auth_token(force_reload_cache=True, is_retry=True)
@@ -606,10 +605,10 @@ class lib_joyn(Singleton):
 								return self.get_auth_token(reset_anon=True, is_retry=True)
 							else:
 								pass
-								return self.xbmc_helper.notification(
-								        compat._format(self.xbmc_helper.translation('ERROR'),
-								                       self.xbmc_helper.translation('ACCOUNT')),
-								        self.xbmc_helper.translation('MSG_RERESH_AUTH_FAILED'))
+								return xbmc_helper().notification(
+								        compat._format(xbmc_helper().translation('ERROR'),
+								                       xbmc_helper().translation('ACCOUNT')),
+								        xbmc_helper().translation('MSG_RERESH_AUTH_FAILED'))
 
 				self.auth_token_data.update({
 				        'created': int(time()),
@@ -618,13 +617,13 @@ class lib_joyn(Singleton):
 				})
 
 			except Exception as e:
-				self.xbmc_helper.log_debug('Could not refresh auth token! - {}', e)
+				xbmc_helper().log_debug('Could not refresh auth token! - {}', e)
 
 			# refresh account_info too
 			if self.auth_token_data.get('has_account', False) is not False:
 				self.account_info = self.get_account_info(True)
 
-			self.xbmc_helper.set_json_data('auth_tokens', self.auth_token_data)
+			xbmc_helper().set_json_data('auth_tokens', self.auth_token_data)
 
 		if logout is True and self.auth_token_data.get('has_account', False) is True and self.auth_token_data.get(
 		        'access_token', None) is not None:
@@ -634,7 +633,7 @@ class lib_joyn(Singleton):
 			                       post_data='',
 			                       no_cache=True,
 			                       additional_headers=[('Authorization', self.get_access_token())])
-			self.xbmc_helper.del_data('auth_data')
+			xbmc_helper().del_data('auth_data')
 
 			return self.get_auth_token(reset_anon=True)
 
@@ -646,7 +645,7 @@ class lib_joyn(Singleton):
 		if _auth_token is not None:
 			return compat._format('{} {}', _auth_token.get('token_type'), _auth_token.get('access_token'))
 		else:
-			self.xbmc_helper.log_notice("Failed to get auth token")
+			xbmc_helper().log_notice("Failed to get auth token")
 			return None
 
 
@@ -663,7 +662,6 @@ class lib_joyn(Singleton):
 	@staticmethod
 	def get_metadata(data, query_type, title_type_id=None):
 
-		obj_xbmc_helper = xbmc_helper()
 		metadata = {
 		        'art': {},
 		        'infoLabels': {},
@@ -678,19 +676,19 @@ class lib_joyn(Singleton):
 
 		if title_type_id is not None and 'title' in metadata['infoLabels'].keys():
 			metadata['infoLabels'].update(
-			        {'title': compat._format(obj_xbmc_helper.translation('TITLE_LABEL'), metadata['infoLabels'].get('title', ''))})
+			        {'title': compat._format(xbmc_helper().translation('TITLE_LABEL'), metadata['infoLabels'].get('title', ''))})
 
-		if obj_xbmc_helper.get_bool_setting('highlight_premium') is True and isinstance(data.get('markings', None),
+		if xbmc_helper().get_bool_setting('highlight_premium') is True and isinstance(data.get('markings', None),
 		                                                                              list) and 'PREMIUM' in data['markings']:
 			metadata['infoLabels'].update({
 			        'title':
-			        compat._format(obj_xbmc_helper.translation('PLUS_HIGHLIGHT_LABEL'), metadata['infoLabels'].get('title', ''))
+			        compat._format(xbmc_helper().translation('PLUS_HIGHLIGHT_LABEL'), metadata['infoLabels'].get('title', ''))
 			})
 
 		if data.get('isBookmarked', None) is not None:
 			if data.get('isBookmarked', False) is True:
 				metadata['infoLabels'].update(
-				        {'title': compat._format(obj_xbmc_helper.translation('JOYN_BOOKMARK_LABEL'), metadata['infoLabels']['title'])})
+				        {'title': compat._format(xbmc_helper().translation('JOYN_BOOKMARK_LABEL'), metadata['infoLabels']['title'])})
 				metadata['is_bookmarked'] = True
 			else:
 				metadata['is_bookmarked'] = False
@@ -733,7 +731,7 @@ class lib_joyn(Singleton):
 			age_rating = data.get('season').get('ageRating').get('minAge')
 
 		if age_rating is not None:
-			metadata['infoLabels'].update({'mpaa': compat._format(obj_xbmc_helper.translation('MIN_AGE'), str(age_rating))})
+			metadata['infoLabels'].update({'mpaa': compat._format(xbmc_helper().translation('MIN_AGE'), str(age_rating))})
 
 		if 'genres' in data.keys() and isinstance(data['genres'], list):
 			metadata['infoLabels'].update({'genre': []})
@@ -772,11 +770,11 @@ class lib_joyn(Singleton):
 
 		if query_type == 'EPISODE':
 			if 'endsAt' in data.keys() and data['endsAt'] is not None and data['endsAt'] < 9999999999:
-				endsAt = obj_xbmc_helper.timestamp_to_datetime(data['endsAt'])
+				endsAt = xbmc_helper().timestamp_to_datetime(data['endsAt'])
 				if endsAt is not False:
 					metadata['infoLabels'].update({
 					        'plot':
-					        compat._format('{}{}', compat._format(obj_xbmc_helper.translation('VIDEO_AVAILABLE'), endsAt),
+					        compat._format('{}{}', compat._format(xbmc_helper().translation('VIDEO_AVAILABLE'), endsAt),
 					                       metadata['infoLabels'].get('plot', ''))
 					})
 
@@ -793,7 +791,7 @@ class lib_joyn(Singleton):
 					metadata['art'].update({'clearlogo': series_meta['art']['clearlogo']})
 
 		if 'airdate' in data.keys() and data['airdate'] is not None:
-			broadcast_datetime = obj_xbmc_helper.timestamp_to_datetime(data['airdate'])
+			broadcast_datetime = xbmc_helper().timestamp_to_datetime(data['airdate'])
 			if broadcast_datetime is not False:
 				broadcast_date = broadcast_datetime.strftime('%Y-%m-%d')
 				metadata['infoLabels'].update({
@@ -826,7 +824,6 @@ class lib_joyn(Singleton):
 	@staticmethod
 	def get_epg_metadata(brand_livestream_epg):
 
-		obj_xbmc_helper = xbmc_helper()
 		epg_metadata = {
 		        'art': {},
 		        'infoLabels': {},
@@ -839,7 +836,7 @@ class lib_joyn(Singleton):
 		if 'quality' in brand_livestream_epg and brand_livestream_epg['quality'] == 'HD' and brand_title[-2:] != 'HD':
 			brand_title = compat._format('{} HD', brand_title)
 		dt_now = datetime.now()
-		epg_metadata['infoLabels'].update({'title': compat._format(obj_xbmc_helper.translation('LIVETV_TITLE'), brand_title, '')})
+		epg_metadata['infoLabels'].update({'title': compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, '')})
 
 		if 'epg' in brand_livestream_epg:
 			epg_data = brand_livestream_epg['epg']
@@ -847,13 +844,13 @@ class lib_joyn(Singleton):
 			epg_data = [brand_livestream_epg]
 
 		for idx, epg_entry in enumerate(epg_data):
-			end_time = obj_xbmc_helper.timestamp_to_datetime(epg_entry['endDate'])
+			end_time = xbmc_helper().timestamp_to_datetime(epg_entry['endDate'])
 
 			if end_time is not False and end_time > dt_now:
 				epg_metadata = lib_joyn.get_metadata(epg_entry, 'EPG')
 				epg_metadata['infoLabels'].update({
 				        'title':
-				        compat._format(obj_xbmc_helper.translation('LIVETV_TITLE'), brand_title, epg_entry['title']),
+				        compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, epg_entry['title']),
 				        'tvShowTitle':
 				        epg_entry['title'],
 				        'mediatype':
@@ -862,11 +859,11 @@ class lib_joyn(Singleton):
 				if len(epg_data) > (idx + 1):
 					epg_metadata['infoLabels'].update({
 					        'plot':
-					        compat._format(obj_xbmc_helper.translation('LIVETV_UNTIL_AND_NEXT'), end_time,
+					        compat._format(xbmc_helper().translation('LIVETV_UNTIL_AND_NEXT'), end_time,
 					                       epg_data[idx + 1]['title'])
 					})
 				else:
-					epg_metadata['infoLabels'].update({'plot': compat._format(obj_xbmc_helper.translation('LIVETV_UNTIL'), end_time)})
+					epg_metadata['infoLabels'].update({'plot': compat._format(xbmc_helper().translation('LIVETV_UNTIL'), end_time)})
 
 				if epg_entry.get('secondaryTitle', None) is not None:
 					epg_metadata['infoLabels']['plot'] += epg_entry['secondaryTitle']
@@ -882,10 +879,9 @@ class lib_joyn(Singleton):
 		recreate_config = True
 		config = {}
 		cached_config = None
-		obj_xbmc_helper = xbmc_helper()
-		addon_version = obj_xbmc_helper.get_addon_version()
+		addon_version = xbmc_helper().get_addon_version()
 
-		expire_config_days = obj_xbmc_helper.get_int_setting('configcachedays')
+		expire_config_days = xbmc_helper().get_int_setting('configcachedays')
 		if expire_config_days is not None:
 			confg_cache_res = cache.get_json('CONFIG', (expire_config_days * 86400))
 		else:
@@ -903,14 +899,14 @@ class lib_joyn(Singleton):
 		# TMP
 		if cached_config is not None and 'ADDON_VERSION' in cached_config.keys():
 			clear_addon_version = cached_config['ADDON_VERSION'].split('-')[1].strip()
-			if obj_xbmc_helper.get_looseversion(clear_addon_version) < obj_xbmc_helper.get_looseversion('2.4.2'):
-				obj_xbmc_helper.del_data('favorites')
-				obj_xbmc_helper.del_data('lastseen')
+			if xbmc_helper().get_looseversion(clear_addon_version) < xbmc_helper().get_looseversion('2.4.2'):
+				xbmc_helper().del_data('favorites')
+				xbmc_helper().del_data('lastseen')
 
 		if cached_config is None or 'ADDON_VERSION' not in cached_config.keys() or ('ADDON_VERSION' in cached_config.keys() and
 		                                                                            cached_config['ADDON_VERSION'] != addon_version):
-			obj_xbmc_helper.remove_dir(CONST['CACHE_DIR'])
-			obj_xbmc_helper.log_debug('cleared cache')
+			xbmc_helper().remove_dir(CONST['CACHE_DIR'])
+			xbmc_helper().log_debug('cleared cache')
 
 		if recreate_config == True:
 			from .submodules.libjoyn_create_config import create_config
