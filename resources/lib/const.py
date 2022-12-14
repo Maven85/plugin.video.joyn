@@ -13,7 +13,7 @@ CONST = {
         'OAUTH_URL': 'https://www.joyn.de/oauth',
         'CLIENT_NAMES': ['web', 'ios', 'android'],
         'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edg/99.0.1150.46',
-        'JOYN_CLIENT_VERSION': '5.294.3',
+        'JOYN_CLIENT_VERSION': '5.343.25',
         'MAX_VIDEO_TRIES': 5,
         'MPD_FILTER': '%28type%3D%3D%22video%22%29%7C%7C%28true%29',
         'SIGNATURE_KEY': 'MzU0MzM3MzgzMzM4MzMzNjM1NDMzNzM4MzYzNDM2MzYzNTQzMz'\
@@ -23,7 +23,7 @@ CONST = {
                          'NDIzNTQzMzczODMzMzgzNjM2MzMzNQ==',
 
         'PRELOAD_JS_CONFIGS': {
-            'API_GW_API_KEY': '"x-api-key":"(.*?)"}',
+            'API_GW_API_KEY': '"x-api-key":"(.*?)"',
         },
         'CHUNKS_JS_CONFIGS': {
             'PLAYERCONFIG_URL': 'https://playerconfig.*?.json',
