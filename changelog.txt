@@ -1,3 +1,5 @@
+2.5.17
+- updated operation hashes
 2.5.16
 - changed regex for x-api-key to fix invalid key error
 2.5.15
