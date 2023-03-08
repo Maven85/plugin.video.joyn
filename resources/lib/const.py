@@ -384,21 +384,21 @@ CONST = {
             'OPERATION': 'CompilationDetailPageStatic',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '37375a28a7be3189894b12b0e255b2c063a01adde5c53c7efc6703cd62b28ac5',
+            'HASH': '9984e66e838b47c06ee696822e73afb5abe06239446e072df33065565635d778',
         },
 
         'MOVIES': {
             'OPERATION': 'PageMovieDetailStatic',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '3e454bfe44582227784d8ed2abaabe3a53e8e8b8e73828800cb027dc3a8bb99f',
+            'HASH': '2650624fea60bc06b75cdcb3b27e81709eab818114a85a6296c8215db5cb60b4',
         },
 
         'SEASONS': {
            'OPERATION': 'SeriesDetailPageStatic',
            'REQUIRED_VARIABLES': ['path', 'licenseFilter'],
            'BOOKMARKS': True,
-           'HASH': '26fca8a686de6320bfadc1d081149dfc1e021c43d8eae771302a6d0dc64a7cc8',
+           'HASH': 'd113d5b8bf37edd7f4df47107b001068ea544017a37de8450228c59a182ad34b',
         },
 
         'EPISODES': {
@@ -421,13 +421,13 @@ CONST = {
             'REQUIRED_VARIABLES': ['text'],
             'NO_CACHE': True,
             'BOOKMARKS': True,
-            'HASH': '3f04da9d29da7c80a29c7897d79d12d3a57bcae14cb3eb3b03a895a91fdf90b4',
+            'HASH': 'f404d5159f3e4973b9bff892fe1a0b06dfbddac2dfe7e45fd14b24fdcba3381e',
         },
 
         'ACCOUNT': {
             'OPERATION': 'GetAccountInfo',
             'NO_CACHE': True,
-            'HASH': 'e443422a2705e42b3167629184be8f5f8976c0825a58f32dc1d5ca4cf9e5e8cb',
+            'HASH': '576238419977667cca1bcd3bf481eda75f059d9f9094f8220865e3ce9ac951b9',
         },
 
         'LANEBOOKMARK': {
