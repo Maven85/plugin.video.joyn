@@ -1,3 +1,6 @@
+2.5.18
+- fixed: content is not displayed for Plus accounts
+- fixed: not all channels are displayed in the media library
 2.5.17
 - updated operation hashes
 2.5.16
