@@ -137,14 +137,14 @@ class lib_joyn(Singleton):
 	def get_account_state(self):
 
 		if self.get_auth_token().get('has_account', False) is not False:
-			return self.get_account_info().get('me', {}).get('state', 'R_A')
+			return self.get_account_info().get('me', {}).get('state', 'code=R_A')
 		return False
 
 
 	def get_account_subscription_config(self, subscription_type):
 
 		if self.get_auth_token().get('has_account', False) is not False:
-			return self.get_account_info().get('me', {}).get('subscriptionConfig', {}).get(subscription_type, False)
+			return self.get_account_info().get('me', {}).get('subscriptionsData', {}).get('config', {}).get(subscription_type, False)
 		return False
 
 

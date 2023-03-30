@@ -513,8 +513,8 @@ msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
 msgctxt "#30672"
-msgid "Plus+ {:s}[CR]HD {:s}"
-msgstr "Plus+ {:s}[CR]HD {:s}"
+msgid "Plus+: {:s}[CR]HD: {:s}"
+msgstr "Plus+: {:s}[CR]HD: {:s}"
 
 msgctxt "#30673"
 msgid "Yes"
