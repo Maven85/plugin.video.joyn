@@ -353,6 +353,11 @@ CONST = {
             },
         },
 
+        'NAVIGATION': {
+            'OPERATION': 'Navigation',
+            'HASH': '5b179fb89fe131a6f013346033a9c2d675575973c67c4ec55830946439f17845',
+        },
+
         'LANDINGPAGECLIENT': {
             'OPERATION': 'LandingPageClient',
             'REQUIRED_VARIABLES': ['path'],

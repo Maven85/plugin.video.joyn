@@ -389,17 +389,12 @@ def index():
 def channels(stream_type, title):
 
     list_items = []
-    landingpage = deepcopy(lib_joyn().get_landingpage())
     if stream_type == 'VOD':
-        blocks = landingpage.get('page').get('blocks')
-        blocks.extend(landingpage.get('page').get('lazyBlocks'))
-        for block in blocks:
-            if block.get('__typename') == 'ChannelLane':
-                channels = lib_joyn().get_graphql_response('LANDINGBLOCKS', {'ids': [block['id']]})
-                if channels is not None and channels.get('blocks', None) is not None:
-                    for channel_block in channels.get('blocks'):
-                        if channel_block.get('id') == block.get('id') and channel_block.get('assets', None) is not None:
-                            list_items.extend(get_list_items(channel_block['assets'], override_fanart=default_fanart))
+        channels = lib_joyn().get_graphql_response('NAVIGATION').get('mediatheken')
+        if channels is not None and channels.get('blocks', None) is not None:
+            for channel_block in channels.get('blocks'):
+                if channel_block.get('assets', None) is not None:
+                    list_items.extend(get_list_items(channel_block['assets'], override_fanart=default_fanart))
 
         xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'CATEORIES', title)
 
