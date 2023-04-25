@@ -198,17 +198,17 @@ msgctxt "#30140"
 msgid "Debug requests"
 msgstr "Debug requests"
 
-msgctxt "#30141"
-msgid "Try fixing audio sync issue in live streams"
-msgstr "Versuchen Audio-Sync bei Live-Streams zu reparieren"
+#msgctxt "#30141"
+#msgid ""
+#msgstr ""
 
-msgctxt "#30142"
-msgid "Total length of a livestream (in seconds)"
-msgstr "Länge des Live-Streams (in Sekunden)"
+#msgctxt "#30142"
+#msgid ""
+#msgstr ""
 
-msgctxt "#30143"
-msgid "Livestream offset (in seconds)"
-msgstr "Verzögerung des Livestreams (in Sekunden)"
+#msgctxt "#30143"
+#msgid ""
+#msgstr ""
 
 #empty strings from id 30144 to 30229
 # SETTINGS-TITLES
@@ -239,17 +239,17 @@ msgctxt "#30356"
 msgid "Save username/password encrypted"
 msgstr "Benutzernamen/Passwort verschlüsselt speichern"
 
-msgctxt "#30357"
-msgid "Try to fixup VOD stream manifests"
-msgstr "Versuchen VOD-Stream-Manifest zu reparieren"
+#msgctxt "#30357"
+#msgid ""
+#msgstr ""
 
-msgctxt "#30358"
-msgid "Try to fixup live streams manifests"
-msgstr "Versuchen Live-Stream-Manifest zu reparieren"
+#msgctxt "#30358"
+#msgid ""
+#msgstr ""
 
-msgctxt "#30359"
-msgid "Try to force local manifest"
-msgstr "Versuchen lokales Manifest zu erzwingen"
+#msgctxt "#30359"
+#msgid ""
+#msgstr ""
 
 msgctxt "#30360"
 msgid "Postion in stream (in seconds) where to start save resume postion"

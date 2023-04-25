@@ -619,30 +619,13 @@
 				</setting>
 			</group>
 			<group id="3">
-				<setting id="fixup_vod" type="boolean" label="30357" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="fixup_live" type="boolean" label="30358" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="force_local_manifest" type="boolean" label="30359" help="">
-					<level>0</level>
-					<default>false</default>
-					<control type="toggle"/>
-				</setting>
-			</group>
-			<group id="4">
 				<setting id="checkdrmcert" type="boolean" label="30101" help="">
 					<level>0</level>
 					<default>false</default>
 					<control type="toggle"/>
 				</setting>
 			</group>
-			<group id="5">
+			<group id="4">
 				<setting id="force_playready" type="boolean" label="30130" help="">
 					<level>0</level>
 					<default>false</default>
@@ -654,52 +637,11 @@
 					<control type="toggle"/>
 				</setting>
 			</group>
-			<group id="6">
+			<group id="5">
 				<setting id="force_clean_all_files" type="boolean" label="30138" help="">
 					<level>0</level>
 					<default>false</default>
 					<control type="toggle"/>
-				</setting>
-			</group>
-			<group id="7">
-				<setting id="fix_livestream_audio_sync" type="boolean" label="30141" help="">
-					<level>0</level>
-					<default>true</default>
-					<control type="toggle"/>
-				</setting>
-				<setting id="livestream_total_length" type="integer" label="30142" help="" parent="fix_livestream_audio_sync">
-					<level>0</level>
-					<default>882</default>
-					<constraints>
-						<minimum>60</minimum>
-						<step>1</step>
-						<maximum>1200</maximum>
-					</constraints>
-					<dependencies>
-						<dependency type="enable">
-							<condition operator="is" setting="fix_livestream_audio_sync">true</condition>
-						</dependency>
-					</dependencies>
-					<control type="slider" format="integer">
-						<popup>false</popup>
-					</control>
-				</setting>
-				<setting id="livestream_offset" type="integer" label="30143" help="" parent="livestream_total_length">
-					<level>0</level>
-					<default>14</default>
-					<constraints>
-						<minimum>12</minimum>
-						<step>1</step>
-						<maximum>60</maximum>
-					</constraints>
-					<dependencies>
-						<dependency type="enable">
-							<condition operator="is" setting="fix_livestream_audio_sync">true</condition>
-						</dependency>
-					</dependencies>
-					<control type="slider" format="integer">
-						<popup>false</popup>
-					</control>
 				</setting>
 			</group>
 		</category>

@@ -28,73 +28,6 @@ def build_signature(encoded_client_data, entitlement_token):
 	return sha1(sha_input.encode('utf-8')).hexdigest()
 
 
-def get_mpd_parser(url, stream_type='VOD', video_id=None):
-
-	from ..mpd_parser import mpd_parser
-
-	xbmc_helper().log_debug('set_mpd_props {} stream_type {}', url, stream_type)
-	mpdparser = None
-
-	# strip out the filter parameter
-	parts = urlparse(url)
-	query_dict = parse_qs(parts.query)
-
-	if 'filter' in query_dict.keys():
-		query_dict.update({'filter': ''})
-		new_parts = list(parts)
-		new_parts[4] = urlencode(query_dict)
-		new_mpd_url = urlunparse(new_parts)
-		xbmc_helper().log_debug('Stripped out filter from mpd url is {}', new_mpd_url)
-		try:
-			mpdparser = mpd_parser(new_mpd_url, lib_joyn().config)
-		except Exception as e:
-			xbmc_helper().log_debug('Invalid MPD - Exception: {}', e)
-			pass
-
-	if mpdparser is None or mpdparser.mpd_tree is None:
-		try:
-			mpdparser = mpd_parser(url, lib_joyn().config)
-		except Exception as e:
-			xbmc_helper().log_error('Invalid Orginal MPD - Exception: {}', e)
-
-	if mpdparser is not None:
-
-		toplevel_base_url = mpdparser.get_toplevel_base_url()
-		if xbmc_helper().get_bool_setting('fixup_vod') is True and stream_type == 'VOD' and toplevel_base_url is not None:
-			if toplevel_base_url.startswith('http'):
-				new_mpd_url = compat._format('{}.mpd?filter={}', toplevel_base_url, CONST.get('MPD_FILTER'))
-				xbmc_helper().log_debug('Try to force new MPD with URL: {}', new_mpd_url)
-				try:
-					_mpdparser = mpd_parser(new_mpd_url, lib_joyn().config)
-					if _mpdparser is not None and _mpdparser.mpd_tree is not None:
-						mpdparser = _mpdparser
-						url = new_mpd_url
-					else:
-						raise Exception('Could not be parsed as valid MPD')
-				except Exception as e:
-					xbmc_helper().log_notice('Trying to force new MPD for VOD failed with URL: {} - Exception: {}', new_mpd_url, e)
-
-		elif xbmc_helper().get_bool_setting('fixup_live') is True and stream_type == 'LIVE' and toplevel_base_url is not None:
-			period_base_url = mpdparser.query_node_value(['Period', 'BaseURL'])
-			if period_base_url is not None:
-				new_mpd_url = compat._format('{}{}cenc-default.mpd', toplevel_base_url, period_base_url)
-				xbmc_helper().log_debug('Trying to fixup Livestream with new URL: {}', new_mpd_url)
-				try:
-					_mpdparser = mpd_parser(new_mpd_url, lib_joyn().config)
-					if _mpdparser is not None and _mpdparser.mpd_tree is not None:
-						mpdparser = _mpdparser
-						url = new_mpd_url
-					else:
-						raise Exception('Could not be parsed as valid MPD')
-				except Exception as e:
-					xbmc_helper().log_notice('Trying to fixup Livestream failed with new URL: {} - Exception: {}', new_mpd_url, e)
-
-	if xbmc_helper().get_bool_setting('force_local_manifest') is True:
-		mpdparser.set_local_path(video_id)
-
-	return mpdparser
-
-
 def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=False, force_refresh_token=False):
 
 	from ..request_helper import post_json
@@ -201,10 +134,6 @@ def get_video_data(video_id, stream_type, season_id=None, movie_id=None, compila
 		video_data.update(dict(drm='widevine', streamingFormat='dash'))
 
 		if isinstance(video_data, dict) and video_data.get('streamingFormat', '') == 'dash' and video_data.get('manifestUrl', None) is not None:
-			mpdparser = get_mpd_parser(url=video_data.get('manifestUrl'), stream_type=stream_type, video_id=video_id)
-			if mpdparser is not None:
-				video_data.update({'parser': mpdparser})
-
 			if season_id is not None:
 				video_data.update({'season_id': season_id})
 			if movie_id is not None:

@@ -730,7 +730,6 @@ def play_movie(path):
 
 def play_video(video_id, client_data, stream_type, season_id=None, movie_id=None, compilation_id=None, path=None, retries=0):
 
-    from .mpd_parser import mpd_parser as mpd_parser
     from xbmc import getCondVisibility
     xbmc_helper().log_debug('play_video: video_id {} - try no: {}', video_id, retries)
     succeeded = False
@@ -746,106 +745,78 @@ def play_video(video_id, client_data, stream_type, season_id=None, movie_id=None
         if not is_helper.check_inputstream():
             xbmc_helper().dialog_id('MSG_WIDEVINE_NOT_FOUND')
             exit(0)
+
     try:
         from .submodules.libjoyn_video import get_video_data
         video_data = get_video_data(video_id, stream_type, season_id, movie_id, compilation_id, path)
 
         xbmc_helper().log_debug('Got video data: {}', video_data)
 
-        parser = video_data.get('parser', None)
-        if parser is not None:
+        list_item.setContentLookup(False)
+        list_item.setProperty('inputstreamaddon' if xbmc_helper().kodi_version <= 18 else 'inputstream', CONST['INPUTSTREAM_ADDON'])
 
-            list_item.setContentLookup(False)
-            list_item.setProperty('inputstreamaddon' if xbmc_helper().kodi_version <= 18 else 'inputstream', CONST['INPUTSTREAM_ADDON'])
-            # DASH
-            if isinstance(parser, mpd_parser):
-                list_item.setMimeType('application/dash+xml')
-                list_item.setProperty(compat._format('{}.manifest_type', CONST['INPUTSTREAM_ADDON']), 'mpd')
-                if parser.mpd_filepath is not None:
-                    list_item.setPath(parser.mpd_filepath if not getCondVisibility('System.Platform.Windows')
-                                      and not getCondVisibility('System.Platform.UWP') else parser.mpd_filepath.replace('\\', '/'))
-                elif parser.mpd_url is not None:
-                    list_item.setPath(lib_joyn().add_user_agent_http_header(parser.mpd_url))
-                else:
-                    raise ValueError(compat._format('Could not find a valid DASH Manifest - parser: {}', vars(mpd_parser)))
+        # DASH
+        list_item.setMimeType('application/dash+xml')
+        list_item.setProperty(compat._format('{}.manifest_type', CONST['INPUTSTREAM_ADDON']), 'mpd')
+        list_item.setPath(video_data.get('manifestUrl', None))
 
-                drm = video_data.get('drm', '')
-                license_key = video_data.get('licenseUrl', None)
-                license_cert = video_data.get('certificateUrl', None)
-                xbmc_helper().log_debug('drm: {} key: {} cert: {}', drm, license_key, license_cert)
+        drm = video_data.get('drm', '')
+        license_key = video_data.get('licenseUrl', None)
+        license_cert = video_data.get('certificateUrl', None)
+        xbmc_helper().log_debug('drm: {} key: {} cert: {}', drm, license_key, license_cert)
 
-                if license_key is not None:
-                    if drm.lower() == 'widevine':
-                        xbmc_helper().log_notice('Using Widevine as DRM')
+        if license_key is not None:
+            if drm.lower() == 'widevine':
+                xbmc_helper().log_notice('Using Widevine as DRM')
 
-                        list_item.setProperty(compat._format('{}.license_type', CONST['INPUTSTREAM_ADDON']), 'com.widevine.alpha')
-                        list_item.setProperty(
-                                compat._format('{}.license_key', CONST['INPUTSTREAM_ADDON']),
-                                compat._format(
-                                        '{}|{}|R{{SSM}}|', license_key,
-                                        request_helper.get_header_string({
-                                                'User-Agent': lib_joyn().config.get('USER_AGENT'),
-                                                'Content-Type': 'application/octet-stream'
-                                        })))
-                        list_item.setProperty(compat._format('{}.stream_headers', CONST['INPUTSTREAM_ADDON']),
-                                              request_helper.get_header_string({'User-Agent': lib_joyn().config['USER_AGENT']}))
+                list_item.setProperty(compat._format('{}.license_type', CONST['INPUTSTREAM_ADDON']), 'com.widevine.alpha')
+                list_item.setProperty(
+                        compat._format('{}.license_key', CONST['INPUTSTREAM_ADDON']),
+                        compat._format(
+                                '{}|{}|R{{SSM}}|', license_key,
+                                request_helper.get_header_string({
+                                        'User-Agent': lib_joyn().config.get('USER_AGENT'),
+                                        'Content-Type': 'application/octet-stream'
+                                })))
+                list_item.setProperty(compat._format('{}.stream_headers', CONST['INPUTSTREAM_ADDON']),
+                                      request_helper.get_header_string({'User-Agent': lib_joyn().config['USER_AGENT']}))
 
-                        if license_cert is not None and xbmc_helper().get_bool_setting('checkdrmcert') is True:
-                            xbmc_helper().log_debug('Set DRM cert: {}', license_cert)
-                            list_item.setProperty(compat._format('{}.server_certificate', CONST['INPUTSTREAM_ADDON']),
-                                                  lib_joyn().add_user_agent_http_header(license_cert))
+                if license_cert is not None and xbmc_helper().get_bool_setting('checkdrmcert') is True:
+                    xbmc_helper().log_debug('Set DRM cert: {}', license_cert)
+                    list_item.setProperty(compat._format('{}.server_certificate', CONST['INPUTSTREAM_ADDON']),
+                                          lib_joyn().add_user_agent_http_header(license_cert))
 
-                    elif drm.lower() == 'playready':
-                        xbmc_helper().log_notice('Using PlayReady as DRM')
-                        list_item.setProperty(compat._format('{}.license_type', CONST['INPUTSTREAM_ADDON']), 'com.microsoft.playready')
-                        list_item.setProperty(
-                                compat._format('{}.license_key', CONST['INPUTSTREAM_ADDON']),
-                                compat._format(
-                                        '{}|{}|R{{SSM}}|', license_key,
-                                        request_helper.get_header_string({
-                                                'User-Agent':
-                                                CONST['EDGE_UA'],
-                                                'Content-Type':
-                                                'text/xml',
-                                                'SOAPAction':
-                                                'http://schemas.microsoft.com/DRM/2007/03/protocols/AcquireLicense'
-                                        })))
+            elif drm.lower() == 'playready':
+                xbmc_helper().log_notice('Using PlayReady as DRM')
+                list_item.setProperty(compat._format('{}.license_type', CONST['INPUTSTREAM_ADDON']), 'com.microsoft.playready')
+                list_item.setProperty(
+                        compat._format('{}.license_key', CONST['INPUTSTREAM_ADDON']),
+                        compat._format(
+                                '{}|{}|R{{SSM}}|', license_key,
+                                request_helper.get_header_string({
+                                        'User-Agent':
+                                        CONST['EDGE_UA'],
+                                        'Content-Type':
+                                        'text/xml',
+                                        'SOAPAction':
+                                        'http://schemas.microsoft.com/DRM/2007/03/protocols/AcquireLicense'
+                                })))
 
-                        list_item.setProperty(compat._format('{}.stream_headers', CONST['INPUTSTREAM_ADDON']),
-                                              request_helper.get_header_string({'User-Agent': CONST['EDGE_UA']}))
-                    else:
-                        raise ValueError(compat._format('Unsupported DRM {}', drm))
+                list_item.setProperty(compat._format('{}.stream_headers', CONST['INPUTSTREAM_ADDON']),
+                                      request_helper.get_header_string({'User-Agent': CONST['EDGE_UA']}))
 
-            if stream_type == 'LIVE':
-                list_item.setProperty(compat._format('{}.manifest_update_parameter', CONST['INPUTSTREAM_ADDON']), 'full')
+        if stream_type == 'LIVE':
+            list_item.setProperty(compat._format('{}.manifest_update_parameter', CONST['INPUTSTREAM_ADDON']), 'full')
 
-                if xbmc_helper().get_bool_setting('fix_livestream_audio_sync') is True:
-                    mpd_timeshift_buffer = parser.get_timeshift_buffer_secs()
-                    if mpd_timeshift_buffer is not None:
-                        xbmc_helper().log_debug('Got timeshiftbuffer from mpd: {}', mpd_timeshift_buffer)
-                        live_stream_length = mpd_timeshift_buffer
-                    else:
-                        live_stream_length = xbmc_helper().get_int_setting('livestream_total_length')
+        succeeded = True
 
-                    live_stream_resume_pos = live_stream_length - xbmc_helper().get_int_setting('livestream_offset')
-
-                    list_item.setProperty('TotalTime', str(float(live_stream_length)))
-                    list_item.setProperty('ResumeTime', str(float(live_stream_resume_pos)))
-                    xbmc_helper().log_debug('Tried fixing livestream audio sync issue - total time: {} - resume pos {}', live_stream_length,
-                                            live_stream_resume_pos)
-
-            succeeded = True
-
-            from .submodules.plugin_lastseen import add_lastseen
-            if video_data.get('season_id') and video_data.get('path'):
-                add_lastseen(season_id=video_data['season_id'], path=video_data['path'], max_lastseen=CONST['LASTSEEN_ITEM_COUNT'])
-            elif video_data.get('movie_id') and video_data.get('path'):
-                add_lastseen(movie_id=video_data['movie_id'], path=video_data['path'], max_lastseen=CONST['LASTSEEN_ITEM_COUNT'])
-            elif 'compilation_id' in video_data.keys() and video_data['compilation_id'] is not None:
-                add_lastseen(compilation_id=video_data['compilation_id'], path=video_data['path'], max_lastseen=CONST['LASTSEEN_ITEM_COUNT'])
-
-        else:
-            raise ValueError(compat._format('Could not get parser: {}', parser))
+        from .submodules.plugin_lastseen import add_lastseen
+        if video_data.get('season_id') and video_data.get('path'):
+            add_lastseen(season_id=video_data['season_id'], path=video_data['path'], max_lastseen=CONST['LASTSEEN_ITEM_COUNT'])
+        elif video_data.get('movie_id') and video_data.get('path'):
+            add_lastseen(movie_id=video_data['movie_id'], path=video_data['path'], max_lastseen=CONST['LASTSEEN_ITEM_COUNT'])
+        elif 'compilation_id' in video_data.keys() and video_data['compilation_id'] is not None:
+            add_lastseen(compilation_id=video_data['compilation_id'], path=video_data['path'], max_lastseen=CONST['LASTSEEN_ITEM_COUNT'])
 
     except Exception as e:
         if retries < CONST.get('MAX_VIDEO_TRIES'):
