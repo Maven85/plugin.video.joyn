@@ -1,3 +1,6 @@
+2.5.19
+- fixed: x-api-key could not be extracted
+- cleanup
 2.5.18
 - fixed: content is not displayed for Plus accounts
 - fixed: not all channels are displayed in the media library
