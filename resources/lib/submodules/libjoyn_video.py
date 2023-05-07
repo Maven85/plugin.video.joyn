@@ -56,7 +56,7 @@ def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=
 	entitlement_request_headers = [('Authorization', lib_joyn().get_access_token(force_refresh=force_refresh_token))]
 	entitlement_response = post_json(url=compat._format(
 	        '{}/{}',
-	        lib_joyn().config['entitlementBaseUrl'], CONST['ENTITLEMENT_URL']),
+	        CONST.get('ENTITLEMENT_BASE_URL'), CONST['ENTITLEMENT_URL']),
 	                                 config=lib_joyn().config,
 	                                 data=entitlement_request_data,
 	                                 additional_headers=entitlement_request_headers,
@@ -94,7 +94,7 @@ def get_video_data(video_id, stream_type, season_id=None, movie_id=None, compila
 		from ..request_helper import base64_encode_urlsafe, get_json_response
 
 		video_url = compat._format('{}/{}/{}/playlist',
-								   lib_joyn().config['playbackApiBaseUrl'],
+								   CONST.get('PLAYBACK_API_BASE_URL'),
 								   'channel' if stream_type == 'LIVE' else 'asset', video_id)
 
 		video_data_payload = dumps(dict(
