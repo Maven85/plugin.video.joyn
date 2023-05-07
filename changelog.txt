@@ -1,3 +1,5 @@
+2.5.20
+- fixed: read entitlementBaseUrl and playbackApiBaseUrl from const
 2.5.19
 - fixed: x-api-key could not be extracted
 - cleanup
