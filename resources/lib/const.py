@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
 CONST = {
-        'BASE_URL': 'https://www.joyn.de',
+        'BASE_URL': 'https://www.joyn.{}',
         'ENTITLEMENT_URL': 'entitlement-token',
-        'IP_API_URL': 'http://ip-api.com/json?lang={:s}&fields=status,country,countryCode',
+        'IP_API_URL': 'http://ip-api.com/json/?fields=status,country,countryCode',
         'AUTH_URL': 'https://auth.joyn.de/auth',
         'AUTH_ANON': '/anonymous',
         'AUTH_REFRESH': '/refresh',
         'AUTH_LOGIN': '/login',
         'AUTH_LOGOUT': '/logout',
         'SSO_AUTH_URL': 'https://auth.joyn.de/sso/endpoints',
-        'OAUTH_URL': 'https://www.joyn.de/oauth',
+        'OAUTH_URL': 'https://www.joyn.{}/oauth',
         'CLIENT_NAMES': ['web', 'ios', 'android'],
-        'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36 Edg/99.0.1150.46',
-        'JOYN_CLIENT_VERSION': '5.343.25',
+        'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42',
+        'JOYN_CLIENT_VERSION': '5.424.10',
         'MAX_VIDEO_TRIES': 5,
         'SIGNATURE_KEY': 'MzU0MzM3MzgzMzM4MzMzNjM1NDMzNzM4MzYzNDM2MzYzNTQzMz'\
                          'czODM2MzYzMzM4MzIzNjM1NDMzNzM4MzMzMDM2MzQzNTM5MzU0'\
@@ -32,6 +32,10 @@ CONST = {
                 'language': 'de',
                 'setting_id': '1',
             },
+            'AT': {
+                'language': 'at',
+                'setting_id': '2',
+            },
         },
         'ENTITLEMENT_BASE_URL': 'https://entitlements-service-alb.prd.platform.s.joyn.de/api/user',
         'PLAYBACK_API_BASE_URL': 'https://api.vod-prd.s.joyn.de/v1',
@@ -45,8 +49,6 @@ CONST = {
             'ETAGS': { 'key': 'etags', 'expires': None},
             'ACCOUNT_INFO': { 'key': 'account_info', 'expires': 36000}
         },
-
-        'CACHE_FILES_KEEP': ['config.json'],
 
         'ETAGS_TTL': 1209600,  # 14 days
 

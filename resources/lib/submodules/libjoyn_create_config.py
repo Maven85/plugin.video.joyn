@@ -38,7 +38,7 @@ def create_config(cached_config, addon_version):
 		os_uname = ['Linux', 'hostname', 'kernel-ver', 'kernel-sub-ver', 'x86_64']
 
 	# android
-	user_agent_suffix = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36'
+	user_agent_suffix = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
 	if getCondVisibility('System.Platform.Android'):
 		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Linux; Android {}; {}) {}',
 		        xbmc_helper().get_android_prop('ro.build.version.release', True) or '12',
@@ -57,17 +57,8 @@ def create_config(cached_config, addon_version):
 	else:
 		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Windows NT 10.0; Win64; x64) {}', user_agent_suffix)
 
-	html_content = request_helper.get_url(CONST['BASE_URL'], config)
-	if html_content is None or html_content == '':
-		xbmc_helper().notification(compat._format(xbmc_helper().translation('ERROR'), 'Url access'),
-		                           compat._format(xbmc_helper().translation('MSG_NO_ACCESS_TO_URL'), CONST['BASE_URL']))
-		exit(0)
-
-	county_setting = xbmc_helper().get_setting('country')
-	xbmc_helper().log_debug('COUNTRY SETTING: {}', county_setting)
 	try:
-		ip_api_response = request_helper.get_json_response(url=compat._format(CONST['IP_API_URL'],
-		                                                                      xbmc_helper().translation('LANG_CODE')),
+		ip_api_response = request_helper.get_json_response(url=CONST['IP_API_URL'],
 		                                                   config=config,
 		                                                   silent=True)
 
@@ -81,22 +72,22 @@ def create_config(cached_config, addon_version):
 
 	config.update({'actual_country': ip_api_response.get('countryCode', 'DE')})
 
-	if county_setting == '' or county_setting == '0':
-		xbmc_helper().log_debug('IP API Response is: {}', ip_api_response)
-		if config.get('actual_country', 'DE') in CONST['COUNTRIES'].keys():
-			config.update({'country': config.get('actual_country', 'DE')})
-		else:
-			xbmc_helper().dialog_action(
-			        compat._format(xbmc_helper().translation('MSG_COUNTRY_INVALID'), ip_api_response.get('country', 'DE')))
-			exit(0)
+	xbmc_helper().log_debug('IP API Response is: {}', ip_api_response)
+	if config.get('actual_country', 'DE') in CONST['COUNTRIES'].keys():
+		config.update({'country': config.get('actual_country', 'DE')})
 	else:
-		for supported_country_key, supported_country in CONST['COUNTRIES'].items():
-			if supported_country['setting_id'] == county_setting:
-				config.update({'country': supported_country_key})
-				break
+		xbmc_helper().dialog_action(
+		        compat._format(xbmc_helper().translation('MSG_COUNTRY_INVALID'), ip_api_response.get('country', 'DE')))
+		exit(0)
 
 	if config['country'] is None:
 		xbmc_helper().dialog_action(xbmc_helper().translation('MSG_COUNTRY_NOT_DETECTED'))
+		exit(0)
+
+	html_content = request_helper.get_url(compat._format(CONST['BASE_URL'], config['country'].lower()), config)
+	if html_content is None or html_content == '':
+		xbmc_helper().notification(compat._format(xbmc_helper().translation('ERROR'), 'Url access'),
+		                           compat._format(xbmc_helper().translation('MSG_NO_ACCESS_TO_URL'), compat._format(CONST['BASE_URL'], config['country'].lower())))
 		exit(0)
 
 	do_break = False
@@ -106,7 +97,7 @@ def create_config(cached_config, addon_version):
 	for preload_js_url in preload_scripts:
 		try:
 			if not preload_js_url.startswith('http'):
-				preload_js_url = urljoin(CONST['BASE_URL'], preload_js_url)
+				preload_js_url = urljoin(compat._format(CONST['BASE_URL'], config['country'].lower()), preload_js_url)
 			if parsed_preload_js_url is None:
 				parsed_preload_js_url = urlparse(preload_js_url)
 			preload_js = request_helper.get_url(preload_js_url, config)
@@ -130,7 +121,8 @@ def create_config(cached_config, addon_version):
 
 	if use_outdated_cached_config is False:
 		config['GRAPHQL_HEADERS'] = [('x-api-key', config['API_GW_API_KEY']),
-		                             ('Joyn-Platform', xbmc_helper().get_text_setting('joyn_platform'))]
+		                             ('Joyn-Platform', xbmc_helper().get_text_setting('joyn_platform')),
+		                             ('Joyn-Country', config['country'])]
 
 	config['CLIENT_NAME'] = xbmc_helper().get_text_setting('joyn_platform')
 

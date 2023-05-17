@@ -54,17 +54,7 @@ msgctxt "#30104"
 msgid "Clear cache"
 msgstr ""
 
-msgctxt "#30105"
-msgid "Country"
-msgstr ""
-
-msgctxt "#30106"
-msgid "Detect automatically"
-msgstr ""
-
-msgctxt "#30107"
-msgid "Germany"
-msgstr ""
+#empty strings from id 30105 to 30107
 
 msgctxt "#30108"
 msgid "inputstream Addon settings"
@@ -186,9 +176,7 @@ msgctxt "#30137"
 msgid "Logout"
 msgstr ""
 
-msgctxt "#30138"
-msgid "Force to remove all files when clearing cache"
-msgstr ""
+#empty string id 30138
 
 msgctxt "#30139"
 msgid "Debug"

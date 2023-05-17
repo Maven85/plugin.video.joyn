@@ -41,6 +41,9 @@ class lib_joyn(Singleton):
 		self.addon = None
 		self.epg_cache = None
 		self.node = None
+		self.login_headers = [('Joyn-Country', self.config['country']),
+							  ('Joyn-Distribution-Tenant', compat._format('JOYN_{}', self.config['country']))
+							 ]
 
 
 	def get_node(self):
@@ -422,6 +425,7 @@ class lib_joyn(Singleton):
 				client_ids = self.get_client_ids(username, password)
 				endpoints = request_helper.get_json_response(url=CONST.get('SSO_AUTH_URL'),
 															 config=self.config,
+															 headers=self.login_headers,
 															 params=dict(
 																client_id=client_ids.get('client_id'),
 																client_name=client_ids.get('client_name')
@@ -486,14 +490,6 @@ class lib_joyn(Singleton):
 												 cookie_file=cookie_file,
 												 no_cache=True)
 
-				a = request_helper.get_json_response(url=compat._format(
-																		'https://auth.7pass.de/token-srv/prelogin/metadata/{}?acceptLanguage=de-de',
-																		id_dict['track_id'][0] if login_flow_exp == False else id_dict['cd1'][0]
-																	   ),
-													 config=self.config,
-													 cookie_file=cookie_file,
-													 no_cache=True)
-
 				if login_flow_exp == False:
 					# CONTINUE
 					a, b = request_helper.get_url(url=compat._format(
@@ -514,12 +510,13 @@ class lib_joyn(Singleton):
 							  client_id=client_id,
 							  code=id_dict['code'][0],
 							  code_verifier='',
-							  redirect_uri='https://www.joyn.de/oauth',
+							  redirect_uri=compat._format(CONST['OAUTH_URL'], self.config['country'].lower()),
 							  tracking_id=id_dict['cd1'][0],
 							  tracking_name='web'
 							 )
 				auth_token_data = request_helper.post_json(url=endpoints['redeem-token'],
 														   config=self.config,
+														   additional_headers=self.login_headers,
 														   data=params,
 														   cookie_file=cookie_file,
 														   no_cache=True)
@@ -553,6 +550,7 @@ class lib_joyn(Singleton):
 
 			auth_token_data = request_helper.post_json(url=compat._format('{}{}', CONST.get('AUTH_URL'), CONST.get('AUTH_ANON')),
 			                                           config=self.config,
+			                                           additional_headers=self.login_headers,
 			                                           data=self.get_client_ids(),
 			                                           no_cache=True)
 
@@ -581,6 +579,7 @@ class lib_joyn(Singleton):
 				refresh_auth_token_data = request_helper.post_json(url=compat._format('{}{}', CONST.get('AUTH_URL'),
 				                                                                      CONST.get('AUTH_REFRESH')),
 				                                                   config=self.config,
+				                                                   additional_headers=self.login_headers,
 				                                                   data=refresh_auth_token_req_data,
 				                                                   no_cache=True,
 				                                                   return_json_errors=['VALIDATION_ERROR'])
@@ -630,9 +629,9 @@ class lib_joyn(Singleton):
 
 			request_helper.get_url(url=compat._format('{}{}', CONST.get('AUTH_URL'), CONST.get('AUTH_LOGOUT')),
 			                       config=self.config,
+			                       additional_headers=[*dict.fromkeys(self.login_headers + [('Authorization', self.get_access_token())])],
 			                       post_data='',
-			                       no_cache=True,
-			                       additional_headers=[('Authorization', self.get_access_token())])
+			                       no_cache=True)
 			xbmc_helper().del_data('auth_data')
 
 			return self.get_auth_token(reset_anon=True)

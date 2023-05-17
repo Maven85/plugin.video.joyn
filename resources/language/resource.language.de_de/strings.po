@@ -54,17 +54,7 @@ msgctxt "#30104"
 msgid "Clear cache"
 msgstr "Cache leeren"
 
-msgctxt "#30105"
-msgid "Country"
-msgstr "Land"
-
-msgctxt "#30106"
-msgid "Detect automatically"
-msgstr "Automatisch erkennen"
-
-msgctxt "#30107"
-msgid "Germany"
-msgstr "Deutschland"
+#empty strings from id 30105 to 30107
 
 msgctxt "#30108"
 msgid "inputstream Addon settings"
@@ -186,9 +176,7 @@ msgctxt "#30137"
 msgid "Logout"
 msgstr "Abmelden"
 
-msgctxt "#30138"
-msgid "Force to remove all files when clearing cache"
-msgstr "Löschen aller Dateien aus dem Cache erzwingen"
+#empty string id 30138
 
 msgctxt "#30139"
 msgid "Debug"
@@ -198,19 +186,7 @@ msgctxt "#30140"
 msgid "Debug requests"
 msgstr "Debug requests"
 
-#msgctxt "#30141"
-#msgid ""
-#msgstr ""
-
-#msgctxt "#30142"
-#msgid ""
-#msgstr ""
-
-#msgctxt "#30143"
-#msgid ""
-#msgstr ""
-
-#empty strings from id 30144 to 30229
+#empty strings from id 30141 to 30229
 # SETTINGS-TITLES
 
 #empty strings from id 30230 to 30350

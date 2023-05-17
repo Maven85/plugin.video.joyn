@@ -113,8 +113,7 @@ class xbmc_helper(Singleton):
 
         dirs, files = listdir(xbmc_directory)
         for _file in files:
-            if self.get_bool_setting('force_clean_all_files') is True or _file not in CONST['CACHE_FILES_KEEP']:
-                remove_ok = delete(join(xbmc_directory, _file))
+            remove_ok = delete(join(xbmc_directory, _file))
 
         for directory in dirs:
             if directory != '.' and directory != '..':
