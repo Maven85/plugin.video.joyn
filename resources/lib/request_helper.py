@@ -203,7 +203,7 @@ def post_json(url,
               return_json_errors=[],
               cookie_file=None):
 
-    additional_headers = [*dict.fromkeys(additional_headers + [('Content-Type', 'application/json')])]
+    additional_headers.append(('Content-Type', 'application/json'))
     return get_json_response(url=url,
                              config=config,
                              headers=additional_headers,

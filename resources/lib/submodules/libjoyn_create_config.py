@@ -38,7 +38,7 @@ def create_config(cached_config, addon_version):
 		os_uname = ['Linux', 'hostname', 'kernel-ver', 'kernel-sub-ver', 'x86_64']
 
 	# android
-	user_agent_suffix = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36'
+	user_agent_suffix = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
 	if getCondVisibility('System.Platform.Android'):
 		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Linux; Android {}; {}) {}',
 		        xbmc_helper().get_android_prop('ro.build.version.release', True) or '12',
@@ -48,12 +48,12 @@ def create_config(cached_config, addon_version):
 
 	# linux on arm uses widevine from chromeos
 	elif os_uname[0] == 'Linux' and os_uname[4].lower().find('arm') != -1:
-		config['USER_AGENT'] = compat._format('Mozilla/5.0 (X11; CrOS {} 14268.67.0) {}', os_uname[4], user_agent_suffix)
+		config['USER_AGENT'] = compat._format('Mozilla/5.0 (X11; CrOS {} 15359.58.0) {}', os_uname[4], user_agent_suffix)
 		config['IS_ARM'] = True
 	elif os_uname[0] == 'Linux':
 		config['USER_AGENT'] = compat._format('Mozilla/5.0 (X11; Linux {}) {}', os_uname[4], user_agent_suffix)
 	elif os_uname[0] == 'Darwin':
-		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Macintosh; Intel Mac OS X 12_1) {}', user_agent_suffix)
+		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) {}', user_agent_suffix)
 	else:
 		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Windows NT 10.0; Win64; x64) {}', user_agent_suffix)
 

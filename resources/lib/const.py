@@ -12,8 +12,8 @@ CONST = {
         'SSO_AUTH_URL': 'https://auth.joyn.de/sso/endpoints',
         'OAUTH_URL': 'https://www.joyn.{}/oauth',
         'CLIENT_NAMES': ['web', 'ios', 'android'],
-        'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36 Edg/113.0.1774.42',
-        'JOYN_CLIENT_VERSION': '5.424.10',
+        'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
+        'JOYN_CLIENT_VERSION': '5.438.3',
         'MAX_VIDEO_TRIES': 5,
         'SIGNATURE_KEY': 'MzU0MzM3MzgzMzM4MzMzNjM1NDMzNzM4MzYzNDM2MzYzNTQzMz'\
                          'czODM2MzYzMzM4MzIzNjM1NDMzNzM4MzMzMDM2MzQzNTM5MzU0'\
@@ -358,55 +358,55 @@ CONST = {
 
         'NAVIGATION': {
             'OPERATION': 'Navigation',
-            'HASH': '5b179fb89fe131a6f013346033a9c2d675575973c67c4ec55830946439f17845',
+            'HASH': '818622ff5afe143664241034ba0c537650ec9a2eeae4d568830b47d8de605b7e',
         },
 
         'LANDINGPAGECLIENT': {
             'OPERATION': 'LandingPageClient',
             'REQUIRED_VARIABLES': ['path'],
-            'HASH': 'b74048f7eef3787e5d48163a8207a8e26910bb28adb1209cf9601ed48e872236',
+            'HASH': 'f9a0439a9765ac84fd3663c56de79c98a77c6173efc6c353a42442a7b0c58132',
         },
 
        'LANDINGBLOCKS': {
             'OPERATION': 'LandingBlocks',
             'REQUIRED_VARIABLES': ['ids'],
             'BOOKMARKS': True,
-            'HASH': '86000cc3d4c43fb1d96fdf1a020558286884b0a91668ec270127517ce5d4c551',
+            'HASH': '7290b8bd058db1ce85f4cdb19a6216ce7a462cd53d8e07431c00458c64bbc8a5',
         },
 
         'CHANNEL': {
             'OPERATION': 'PageDetailMediaLibrary',
             'REQUIRED_VARIABLES': ['path', 'first', 'offset'],
             'BOOKMARKS': True,
-            'HASH': '12b0037c038d62ca9f478c46e766c2088c585562797cf47124329e2622835624',
+            'HASH': 'b901076c1bec092034fb8fb007258b9498a6cd0e7c64f92cbb50d317023ab220',
         },
 
         'COLLECTION': {
             'OPERATION': 'PageCollectionsDetail',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '07f80fcd0758c21bc2c3d326d76c4aa0f04b838444f921c663ec98dca331f6ba',
+            'HASH': 'f700a30ceee32ea9ad245002e4ed5bf236bf54455608592a3ee1ecef5fffbe0e',
         },
 
         'COMPILATION': {
             'OPERATION': 'CompilationDetailPageStatic',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '9984e66e838b47c06ee696822e73afb5abe06239446e072df33065565635d778',
+            'HASH': '8ca5ffbfee759dac92aee2b2ce584d47de1a9d3758819b47865e8fbede6513ea',
         },
 
         'MOVIES': {
             'OPERATION': 'PageMovieDetailStatic',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '2650624fea60bc06b75cdcb3b27e81709eab818114a85a6296c8215db5cb60b4',
+            'HASH': '53f89a4638fdd0b0d0b361c86ba29e43e844c256f733c7011caffae776ccc5cd',
         },
 
         'SEASONS': {
            'OPERATION': 'SeriesDetailPageStatic',
            'REQUIRED_VARIABLES': ['path', 'licenseFilter'],
            'BOOKMARKS': True,
-           'HASH': 'd113d5b8bf37edd7f4df47107b001068ea544017a37de8450228c59a182ad34b',
+           'HASH': '281adec8e40a08a271bc4a72f90cdc60430b379f9ec23087ca721996701c978f',
         },
 
         'EPISODES': {
@@ -429,7 +429,7 @@ CONST = {
             'REQUIRED_VARIABLES': ['text'],
             'NO_CACHE': True,
             'BOOKMARKS': True,
-            'HASH': 'f404d5159f3e4973b9bff892fe1a0b06dfbddac2dfe7e45fd14b24fdcba3381e',
+            'HASH': '8090ccb2a0eeed97f306a7157a818d8e14195ddf1aad71076144b03afe92fcdc',
         },
 
         'ACCOUNT': {
@@ -442,7 +442,7 @@ CONST = {
             'OPERATION': 'LaneBookmark',
             'REQUIRED_VARIABLES': ['blockId'],
             'BOOKMARKS': True,
-            'HASH': '595f5f6a3bb6ec94c98ad0d24b7d5f353fa447376c2628324d25c96bcdd3ec82',
+            'HASH': '7a15f636106535ea73d0cf6dff0c868ff63d49b273cef76220842064d5fd7247',
         },
 
         'MEBOOKMARK': {
@@ -471,7 +471,7 @@ CONST = {
             'OPERATION': 'ResumeLaneWithToken',
             'REQUIRED_VARIABLES': ['blockId'],
             'BOOKMARKS': True,
-            'HASH': 'a266678285cd887fe488fa9b96693b9467c07a7e779c82ddce92e5656ca29e40',
+            'HASH': '8795acc1fe7e6183e5a81f51a7a38b07fad9f60d3018f0db70b4ba72a49aec0d',
         },
 
         'RESUMEPOSITIONS': {

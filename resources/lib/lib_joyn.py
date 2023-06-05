@@ -629,7 +629,7 @@ class lib_joyn(Singleton):
 
 			request_helper.get_url(url=compat._format('{}{}', CONST.get('AUTH_URL'), CONST.get('AUTH_LOGOUT')),
 			                       config=self.config,
-			                       additional_headers=[*dict.fromkeys(self.login_headers + [('Authorization', self.get_access_token())])],
+			                       additional_headers=self.login_headers + [('Authorization', self.get_access_token())],
 			                       post_data='',
 			                       no_cache=True)
 			xbmc_helper().del_data('auth_data')
