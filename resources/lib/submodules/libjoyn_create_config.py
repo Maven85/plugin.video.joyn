@@ -103,7 +103,7 @@ def create_config(cached_config, addon_version):
 			preload_js = request_helper.get_url(preload_js_url, config)
 			for config_key, config_regex in CONST.get('PRELOAD_JS_CONFIGS').items():
 				matches = findall(config_regex, preload_js)
-				if len(matches) == 1:
+				if len(matches) > 0:
 					config[config_key] = matches[0]
 					found_configs += 1
 					if found_configs == len(CONST.get('PRELOAD_JS_CONFIGS')):
