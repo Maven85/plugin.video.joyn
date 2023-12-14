@@ -192,13 +192,17 @@ CONST = {
         'LICENSE_TYPES': {
             'FREE': {
                 'AVOD': {
-                    'MARKING_TYPES': ['JOYN_ORIGINAL', 'HD', 'PREVIEW']
+                    'MARKING_TYPES': ['JOYN_ORIGINAL', 'HD', 'PREVIEW', 'WITH_ADS']
                 }
             },
             'PAID': {
                 'SVOD': {
                     'SUBSCRIPTION_TYPE': 'hasActivePlus',
                     'MARKING_TYPES': ['PREMIUM', 'HD', 'JOYN_ORIGINAL', 'PLUS', 'PREVIEW'],
+                },
+                'AVOD': {
+                    'SUBSCRIPTION_TYPE': 'hasActivePlus',
+                    'MARKING_TYPES': ['PREMIUM', 'HD', 'JOYN_ORIGINAL', 'PLUS', 'PREVIEW', 'WITH_ADS'],
                 },
             },
         },

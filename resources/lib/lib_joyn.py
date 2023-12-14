@@ -177,13 +177,11 @@ class lib_joyn(Singleton):
 						for marking in markings:
 							if not marking in CONST['LICENSE_TYPES']['FREE'][license_type]['MARKING_TYPES']:
 								found_all_markings = False
-								break
-
 						if found_all_markings is True:
 							return True
 					else:
 						return True
-				elif license_type in CONST['LICENSE_TYPES']['PAID'].keys():
+				if license_type in CONST['LICENSE_TYPES']['PAID'].keys():
 					if self.get_account_subscription_config(CONST['LICENSE_TYPES']['PAID'][license_type]['SUBSCRIPTION_TYPE']) is True:
 						if len(markings) > 0:
 							found_all_markings = True
