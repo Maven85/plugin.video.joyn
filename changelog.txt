@@ -1,3 +1,5 @@
+2.5.25
+- chore: updated hashes
 2.5.24
 - fixed: not all content is displayed for plus accounts
 2.5.23
