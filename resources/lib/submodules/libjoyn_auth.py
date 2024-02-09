@@ -121,29 +121,35 @@ def logout(dont_check_account=False):
 
 def encrypt_des(key, data):
 	try:
-		from pyDes import triple_des, CBC, PAD_PKCS5
+		from Cryptodome.Cipher import DES3
+		from Cryptodome.Util.Padding import pad
 		from base64 import b64encode
 
 		try:
-			return b64encode(triple_des(key, CBC, "\0\0\0\0\0\0\0\0", padmode=PAD_PKCS5).encrypt(data))
+			key_handle = DES3.new(key, DES3.MODE_CBC, iv=b'\0\0\0\0\0\0\0\0')
+			encrypted = key_handle.encrypt(pad(data.encode('utf-8'), DES3.block_size))
+			return b64encode(encrypted)
 		except Exception as e:
 			xbmc_helper().log_notice('DATA ENCRYPTION FAILED - {}', e)
 			pass
 			return False
 
 	except ImportError as ie:
-		xbmc_helper().log_notice('Could not import pydes: {}', ie)
+		xbmc_helper().log_notice('Could not import cryptodome: {}', ie)
 		pass
 		return False
 
 
 def decrypt_des(key, encrypted_data):
 	try:
-		from pyDes import triple_des, CBC, PAD_PKCS5
+		from Cryptodome.Cipher import DES3
+		from Cryptodome.Util.Padding import unpad
 		from base64 import b64decode
 
 		try:
-			return triple_des(key, CBC, "\0\0\0\0\0\0\0\0", padmode=PAD_PKCS5).decrypt(b64decode(encrypted_data))
+			key_handle = DES3.new(key, DES3.MODE_CBC, iv=b'\0\0\0\0\0\0\0\0')
+			decrypted = unpad(key_handle.decrypt(b64decode(data)), DES3.block_size)
+			return decrypted.decode('utf-8')
 		except Exception as e:
 			xbmc_helper().log_notice('DATA DECRYPTION FAILED - {}', e)
 			pass

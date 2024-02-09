@@ -18,7 +18,7 @@
 		<setting type="sep"/>
 		<setting label="30137" type="action" id="logout" action="RunPlugin(plugin://plugin.video.joyn/?mode=logout)" option="close"/>
 		<setting type="sep"/>
-		<setting label="30356" type="bool" id="save_encrypted_auth_data" default="false" enable="System.HasAddon(script.module.pydes)"/>
+		<setting label="30356" type="bool" id="save_encrypted_auth_data" default="false"/>
 		<setting type="sep"/>
 		<setting label="30689" type="number" id="mpaa_pin"/>
 		<setting type="sep"/>
