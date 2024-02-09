@@ -97,11 +97,6 @@
 				<setting id="save_encrypted_auth_data" type="boolean" label="30356" help="">
 					<level>0</level>
 					<default>false</default>
-					<dependencies>
-						<dependency type="enable">
-							<condition on="property" name="InfoBool">System.HasAddon(script.module.pydes)</condition>
-						</dependency>
-					</dependencies>
 					<control type="toggle"/>
 				</setting>
 			</group>
