@@ -38,7 +38,7 @@ def create_config(cached_config, addon_version):
 		os_uname = ['Linux', 'hostname', 'kernel-ver', 'kernel-sub-ver', 'x86_64']
 
 	# android
-	user_agent_suffix = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+	user_agent_suffix = 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 	if getCondVisibility('System.Platform.Android'):
 		config['USER_AGENT'] = compat._format('Mozilla/5.0 (Linux; Android {}; {}) {}',
 		        xbmc_helper().get_android_prop('ro.build.version.release', True) or '12',
@@ -93,7 +93,7 @@ def create_config(cached_config, addon_version):
 	do_break = False
 	found_configs = 0
 	parsed_preload_js_url = None
-	preload_scripts = list(reversed(findall('<script.*?src="(.*?\.js)"', html_content)))
+	preload_scripts = list(reversed(findall('<script.*?src="(.*?)"', html_content)))
 	for preload_js_url in preload_scripts:
 		try:
 			if not preload_js_url.startswith('http'):
