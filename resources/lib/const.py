@@ -36,6 +36,10 @@ CONST = {
                 'language': 'at',
                 'setting_id': '2',
             },
+            'CH': {
+                'language': 'ch',
+                'setting_id': '3',
+            },
         },
         'ENTITLEMENT_BASE_URL': 'https://entitlements-service-alb.prd.platform.s.joyn.de/api/user',
         'PLAYBACK_API_BASE_URL': 'https://api.vod-prd.s.joyn.de/v1',
