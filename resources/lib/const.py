@@ -12,8 +12,8 @@ CONST = {
         'SSO_AUTH_URL': 'https://auth.joyn.de/sso/endpoints',
         'OAUTH_URL': 'https://www.joyn.{}/oauth',
         'CLIENT_NAMES': ['web', 'ios', 'android'],
-        'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
-        'JOYN_CLIENT_VERSION': '5.438.3',
+        'EDGE_UA': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0',
+        'JOYN_CLIENT_VERSION': '5.733.6',
         'MAX_VIDEO_TRIES': 5,
         'SIGNATURE_KEY': 'MzU0MzM3MzgzMzM4MzMzNjM1NDMzNzM4MzYzNDM2MzYzNTQzMz'\
                          'czODM2MzYzMzM4MzIzNjM1NDMzNzM4MzMzMDM2MzQzNTM5MzU0'\
@@ -439,7 +439,7 @@ CONST = {
         'ACCOUNT': {
             'OPERATION': 'GetAccountInfo',
             'NO_CACHE': True,
-            'HASH': 'ff94d7df5a11035212a8043febab95326e033cfdb3a3d207ef214a7881e67cf8',
+            'HASH': 'c203e4ac81658484155a7a4d51085cdd059f8348c8f683e687cb2749f3b00ea1',
         },
 
         'LANEBOOKMARK': {
