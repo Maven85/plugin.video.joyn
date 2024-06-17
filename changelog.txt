@@ -1,3 +1,6 @@
+2.5.29
+- feat: support for Switzerland
+- chore: updated constants
 2.5.28
 - fixed: config init
 2.5.27
