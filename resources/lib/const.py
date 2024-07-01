@@ -204,6 +204,10 @@ CONST = {
                     'SUBSCRIPTION_TYPE': 'hasActivePlus',
                     'MARKING_TYPES': ['JOYN_ORIGINAL', 'HD', 'PREVIEW', 'PLUS', 'PREMIUM'],
                 },
+                'AVOD': {
+                    'SUBSCRIPTION_TYPE': 'hasActivePlus',
+                    'MARKING_TYPES': ['PREMIUM', 'HD', 'JOYN_ORIGINAL', 'PLUS', 'PREVIEW', 'WITH_ADS'],
+                },
             },
         },
         'FOLDERS': {
