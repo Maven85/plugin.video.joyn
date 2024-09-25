@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime, timedelta
-from distutils.version import LooseVersion
 from io import open as io_open
 from os.path import exists, join
 from time import mktime
@@ -38,9 +37,7 @@ class xbmc_helper(Singleton):
         self.prop_cache = {}
         self.addon_params = None
         self.android_properties = {}
-        self.kodi_python_version = None
         self.kodi_version = None
-        self.kodi_loose_version = None
 
         debug_rpc_res = self.json_rpc(method='Settings.GetSettingValue', params={'setting': 'debug.showloginfo'})
         if debug_rpc_res is not None and debug_rpc_res.get('value', False) is True:
@@ -52,7 +49,6 @@ class xbmc_helper(Singleton):
             from xbmcaddon import Addon
             _kodi_python_version = Addon('xbmc.python').getAddonInfo('version')
             self.log_debug('Detected kodi.python version {}', _kodi_python_version)
-            self.kodi_python_version = LooseVersion(_kodi_python_version)
         except Exception as e:
             self.log_notice('Could not detect kodi.python version: {}', e)
             pass
@@ -61,7 +57,6 @@ class xbmc_helper(Singleton):
             _kodi_version = getInfoLabel('System.BuildVersion')
             self.log_debug('Detected kodi version: {}', _kodi_version)
             self.kodi_version = int(_kodi_version.split('.')[0])
-            self.kodi_loose_version = LooseVersion(_kodi_version)
         except Exception as e:
             self.log_notice('Could not detect kodi version version: {}', e)
             pass
@@ -464,10 +459,6 @@ class xbmc_helper(Singleton):
                         return prop
                 except Exception as e:
                     self.log_error('Getting android property {} with exception: {}', key, e)
-
-
-    def get_looseversion(self, version):
-        return LooseVersion(version)
 
 
     def set_videoinfo(self, listitem, infolabels):
