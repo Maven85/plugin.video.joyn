@@ -895,13 +895,6 @@ class lib_joyn(Singleton):
 			recreate_config = False
 			config = cached_config
 
-		# TMP
-		if cached_config is not None and 'ADDON_VERSION' in cached_config.keys():
-			clear_addon_version = cached_config['ADDON_VERSION'].split('-')[1].strip()
-			if xbmc_helper().get_looseversion(clear_addon_version) < xbmc_helper().get_looseversion('2.4.2'):
-				xbmc_helper().del_data('favorites')
-				xbmc_helper().del_data('lastseen')
-
 		if cached_config is None or 'ADDON_VERSION' not in cached_config.keys() or ('ADDON_VERSION' in cached_config.keys() and
 		                                                                            cached_config['ADDON_VERSION'] != addon_version):
 			xbmc_helper().remove_dir(CONST['CACHE_DIR'])
