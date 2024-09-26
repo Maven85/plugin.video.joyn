@@ -1,3 +1,9 @@
+2.5.30
+- chore: removed dependency on distutils
+- chore: remoded unused imports
+- fix: not all content is visible in the media libraries
+- chore: updated hashes
+- fix: content that does not require a login cannot be played
 2.5.29
 - feat: support for Switzerland
 - chore: updated constants
