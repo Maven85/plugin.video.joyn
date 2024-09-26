@@ -197,6 +197,9 @@ CONST = {
             'FREE': {
                 'AVOD': {
                     'MARKING_TYPES': ['JOYN_ORIGINAL', 'HD', 'PREVIEW', 'WITH_ADS']
+                },
+                'FVOD': {
+                    'MARKING_TYPES': ['JOYN_ORIGINAL', 'HD', 'PREVIEW', 'WITH_ADS']
                 }
             },
             'PAID': {

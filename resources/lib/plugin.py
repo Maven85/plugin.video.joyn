@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from re import search as re_search
 from sys import exit
 from xbmc import executebuiltin, log as xbmc_log
 from xbmcgui import Dialog, ListItem, INPUT_ALPHANUM
@@ -14,14 +15,14 @@ from . import request_helper as request_helper
 from .lib_joyn import lib_joyn as lib_joyn
 
 if compat.PY2:
-    from urllib import urlencode, quote
+    from urllib import unquote_plus, urlencode, quote
     try:
         from simplejson import loads, dumps
     except ImportError:
         from json import loads, dumps
 
 elif compat.PY3:
-    from urllib.parse import urlencode, quote
+    from urllib.parse import unquote_plus, urlencode, quote
     from json import loads, dumps
 
 if xbmc_helper().get_bool_setting('dont_verify_ssl_certificates') is True:
@@ -430,9 +431,15 @@ def tvshows(channel_id, channel_path, title):
     from .submodules.plugin_favorites import get_favorite_entry
     list_items = []
 
-    tvshows = lib_joyn().get_graphql_response('CHANNEL', {'path': channel_path})
-    if tvshows is not None and tvshows.get('page', None) is not None and tvshows.get('page').get('assets', None) is not None:
-        list_items = get_list_items(tvshows['page']['assets'], override_fanart=default_fanart)
+    first = 50
+    offset = 0
+    while True:
+        tvshows = lib_joyn().get_graphql_response('CHANNEL', {'path': channel_path, 'first': first, 'offset': offset})
+        if tvshows is not None and tvshows.get('page', None) is not None and tvshows.get('page').get('assets', None) is not None and len(tvshows.get('page').get('assets')) > 0:
+            list_items.extend(get_list_items(tvshows['page']['assets'], override_fanart=default_fanart))
+            offset += first
+        else:
+            break;
 
     if len(list_items) == 0:
         from xbmcplugin import endOfDirectory
@@ -443,6 +450,7 @@ def tvshows(channel_id, channel_path, title):
 
     addSortMethod(pluginhandle, SORT_METHOD_UNSORTED)
     addSortMethod(pluginhandle, SORT_METHOD_LABEL)
+    list_items = sorted(list_items, key=lambda k: unquote_plus(re_search('title=([^&]*)', k[0]).group(1)).upper().replace('[/I]', '').replace('[I]', ''))
     list_items.append(get_favorite_entry({'channel_id': channel_id, 'channel_path': channel_path}, 'MEDIA_LIBRARY'))
     xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'TV_SHOWS', title)
 
