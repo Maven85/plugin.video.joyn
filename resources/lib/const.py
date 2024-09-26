@@ -371,14 +371,14 @@ CONST = {
         'LANDINGPAGECLIENT': {
             'OPERATION': 'LandingPageClient',
             'REQUIRED_VARIABLES': ['path'],
-            'HASH': '558d4237e09826307e859549aedcc046553e29e8d0790f00c5f036f667a89348',
+            'HASH': 'c5d6d01bfcafe8268a248c23eefdf9e40c088d33ad41126c4b52e40de524d55e',
         },
 
        'LANDINGBLOCKS': {
             'OPERATION': 'LandingBlocks',
             'REQUIRED_VARIABLES': ['ids'],
             'BOOKMARKS': True,
-            'HASH': '7290b8bd058db1ce85f4cdb19a6216ce7a462cd53d8e07431c00458c64bbc8a5',
+            'HASH': 'c3a9300c3c1459f185e966068accf865a991aa22cbe12b3bb730b57744c199bc',
         },
 
         'CHANNEL': {
@@ -413,7 +413,7 @@ CONST = {
            'OPERATION': 'SeriesDetailPageStatic',
            'REQUIRED_VARIABLES': ['path', 'licenseFilter'],
            'BOOKMARKS': True,
-           'HASH': 'c178bbc393f6cae5f6a45443ce7ad4aa96d008ecfb0b61398eae24c39e1a516c',
+           'HASH': '02c011bf9db31495e5abc1dcb6a910955357bcc1e3a3b9ad68d13a3aac5300e1',
         },
 
         'EPISODES': {
