@@ -28,7 +28,7 @@ def build_signature(encoded_client_data, entitlement_token):
 	return sha1(sha_input.encode('utf-8')).hexdigest()
 
 
-def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=False, force_refresh_token=False):
+def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=False, reset_anon=False, force_refresh_token=False):
 
 	from ..request_helper import post_json
 
@@ -53,7 +53,7 @@ def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=
 			else:
 				return get_entitlement_data(video_id=video_id, stream_type=stream_type, pin_required=pin_required, invalid_pin=True)
 
-	entitlement_request_headers = [('Authorization', lib_joyn().get_access_token(force_refresh=force_refresh_token))]
+	entitlement_request_headers = [('Authorization', lib_joyn().get_access_token(reset_anon=reset_anon, force_refresh=force_refresh_token))]
 	entitlement_response = post_json(url=compat._format(
 	        '{}/{}',
 	        CONST.get('ENTITLEMENT_BASE_URL'), CONST['ENTITLEMENT_URL']),
@@ -61,8 +61,8 @@ def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=
 	                                 data=entitlement_request_data,
 	                                 additional_headers=entitlement_request_headers,
 	                                 no_cache=True,
-	                                 return_json_errors=['ENT_PINRequired', 'ENT_PINInvalid', 'INVALID_JWT'])
-
+	                                 return_json_errors=['ENT_PINRequired', 'ENT_PINInvalid', 'INVALID_JWT', 'ENT_RVOD_Playback_Restricted'])
+	xbmc_helper().log_debug('entitlement_response = {}', entitlement_response)
 	if isinstance(entitlement_response, dict) and 'json_errors' in entitlement_response:
 		if 'ENT_PINInvalid' in entitlement_response['json_errors']:
 			return get_entitlement_data(video_id=video_id,
@@ -81,6 +81,12 @@ def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=
 			                            pin_required=pin_required,
 			                            invalid_pin=invalid_pin,
 			                            force_refresh_token=True)
+		elif 'ENT_RVOD_Playback_Restricted' in entitlement_response['json_errors']:
+			return get_entitlement_data(video_id=video_id,
+			                            stream_type=stream_type,
+			                            pin_required=pin_required,
+			                            invalid_pin=invalid_pin,
+			                            reset_anon=True)
 
 	return entitlement_response
 

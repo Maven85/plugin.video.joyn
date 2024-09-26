@@ -380,15 +380,15 @@ class lib_joyn(Singleton):
 				exit(0)
 
 
-	def get_client_ids(self, username=None, password=None):
+	def get_client_ids(self, username=None, password=None, anon=False):
 
 		from .submodules.libjoyn_auth import get_device_uuid
 
 		client_id_data = xbmc_helper().get_json_data('client_ids')
 		if client_id_data is None or client_id_data.get('client_name', 'android') not in CONST['CLIENT_NAMES']:
 			client_id_data = {
-			        'anon_device_id': get_device_uuid(),
-			        'client_id': get_device_uuid(prefix='JOYNCLIENTID'),
+			        'anon_device_id': get_device_uuid(random=anon),
+			        'client_id': get_device_uuid(prefix='JOYNCLIENTID', random=anon),
 			        'client_name': self.config.get('CLIENT_NAME', 'web'),
 			}
 			xbmc_helper().log_debug('Created new client_id_data: {}', client_id_data)
@@ -551,7 +551,7 @@ class lib_joyn(Singleton):
 			auth_token_data = request_helper.post_json(url=compat._format('{}{}', CONST.get('AUTH_URL'), CONST.get('AUTH_ANON')),
 			                                           config=self.config,
 			                                           additional_headers=self.login_headers,
-			                                           data=self.get_client_ids(),
+			                                           data=self.get_client_ids(anon=reset_anon),
 			                                           no_cache=True)
 
 			auth_token_data.update({'created': int(time())})
@@ -639,8 +639,8 @@ class lib_joyn(Singleton):
 		return self.auth_token_data
 
 
-	def get_access_token(self, force_refresh=False):
-		_auth_token = self.get_auth_token(force_refresh=force_refresh)
+	def get_access_token(self, reset_anon=False, force_refresh=False):
+		_auth_token = self.get_auth_token(reset_anon=reset_anon, force_refresh=force_refresh)
 		if _auth_token is not None:
 			return compat._format('{} {}', _auth_token.get('token_type'), _auth_token.get('access_token'))
 		else:
