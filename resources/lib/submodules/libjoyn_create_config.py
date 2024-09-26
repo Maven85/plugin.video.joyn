@@ -4,7 +4,7 @@ from xbmc import getCondVisibility
 from sys import exit
 from copy import deepcopy
 from base64 import b64decode
-from re import findall, search, sub
+from re import findall
 from json import loads
 from collections import OrderedDict
 from ..const import CONST
