@@ -140,7 +140,7 @@ def encrypt_des(key, data):
 		return False
 
 
-def decrypt_des(key, encrypted_data):
+def decrypt_des(key, data):
 	try:
 		from Cryptodome.Cipher import DES3
 		from Cryptodome.Util.Padding import unpad
