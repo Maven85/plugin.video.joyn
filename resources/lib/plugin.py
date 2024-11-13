@@ -450,7 +450,7 @@ def tvshows(channel_id, channel_path, title):
 
     addSortMethod(pluginhandle, SORT_METHOD_UNSORTED)
     addSortMethod(pluginhandle, SORT_METHOD_LABEL)
-    list_items = sorted(list_items, key=lambda k: unquote_plus(re_search('title=([^&]*)', k[0]).group(1)).upper().replace('[/I]', '').replace('[I]', ''))
+    list_items = sorted(list_items, key=lambda k: unquote_plus(re_search(r'title=([^&]*)', k[0]).group(1)).upper().replace('[/I]', '').replace('[I]', ''))
     list_items.append(get_favorite_entry({'channel_id': channel_id, 'channel_path': channel_path}, 'MEDIA_LIBRARY'))
     xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'TV_SHOWS', title)
 
