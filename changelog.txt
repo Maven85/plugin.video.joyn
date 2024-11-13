@@ -1,3 +1,6 @@
+2.5.31
+- chore: define regex pattern as raw string
+- fix: saved credentials cannot be decrypted
 2.5.30
 - chore: removed dependency on distutils
 - chore: remoded unused imports
