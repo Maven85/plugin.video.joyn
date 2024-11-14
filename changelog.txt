@@ -1,3 +1,5 @@
+2.5.32
+- fix: saved credentials cannot be decrypted
 2.5.31
 - chore: define regex pattern as raw string
 - fix: saved credentials cannot be decrypted
