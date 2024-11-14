@@ -176,8 +176,7 @@ def get_auth_data():
 	encrypted_auth_data = xbmc_helper().get_data('auth_data')
 
 	if encrypted_auth_data is not None:
-		decrypted_auth_data = decrypt_des(key=get_device_uuid(prefix='JOYNAUTHDATA', return_bytes=True),
-		                                  encrypted_data=encrypted_auth_data)
+		decrypted_auth_data = decrypt_des(key=get_device_uuid(prefix='JOYNAUTHDATA', return_bytes=True), data=encrypted_auth_data)
 		if decrypted_auth_data is not False:
 			try:
 				return loads(decrypted_auth_data)
