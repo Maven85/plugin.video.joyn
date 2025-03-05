@@ -57,8 +57,6 @@ CONST = {
         'ETAGS_TTL': 1209600,  # 14 days
 
         'LASTSEEN_ITEM_COUNT': 20,
-        'UEPG_REFRESH_INTERVAL': 7200,
-        'UEPG_ROWCOUNT': 5,
         'INPUTSTREAM_ADDON': 'inputstream.adaptive',
 
         'MSG_IDS': {
@@ -82,7 +80,6 @@ CONST = {
             'WATCHLIST_PLOT': 30607,
             'SEARCH_PLOT': 30610,
             'LIVE_TV_PLOT': 30611,
-            'TV_GUIDE_PLOT': 30612,
             'WL_TYPE_ADDED': 30526,
             'WL_TYPE_REMOVED': 30527,
             'MSG_INPUSTREAM_NOT_ENABLED': 30501,

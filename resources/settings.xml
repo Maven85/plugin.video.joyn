@@ -9,9 +9,6 @@
 		<setting label="30108" type="action" id="inputstream_adaptive_settings"
 			action="Addon.OpenSettings(inputstream.adaptive)"
 			enable="System.HasAddon(inputstream.adaptive)" option="close"/>
-		<setting label="30109" type="action" id="uepg_settings"
-			action="Addon.OpenSettings(script.module.uepg)"
-			enable="System.HasAddon(script.module.uepg)" option="close"/>
 	</category>
 	<category label="30352">
 		<setting label="30136" type="action" id="login" action="RunPlugin(plugin://plugin.video.joyn/?mode=login)" option="close"/>

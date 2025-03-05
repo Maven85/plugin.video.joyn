@@ -36,13 +36,6 @@ if xbmc_helper().get_bool_setting('dont_verify_ssl_certificates') is True:
         ssl._create_default_https_context = _create_unverified_https_context
 
 
-def get_uepg_params():
-
-    return compat._format('json={}&refresh_path={}epg&refresh_interval={}&row_count={}',
-                          quote(dumps(lib_joyn().get_uepg_data(pluginurl))), quote(compat._format('{}?mode=epg', pluginurl)),
-                          quote(str(CONST['UEPG_REFRESH_INTERVAL'])), quote(str(CONST['UEPG_ROWCOUNT'])))
-
-
 def get_list_items(response_items,
                    prefix_label=None,
                    subtype_merges=[],
@@ -361,19 +354,6 @@ def index():
             },
                           mode='search',
                           is_folder=False))
-
-    if compat.PY2 is True:
-        list_items.append(
-                get_dir_entry(metadata={
-                        'infoLabels': {
-                                'title': xbmc_helper().translation('TV_GUIDE'),
-                                'plot': xbmc_helper().translation('TV_GUIDE_PLOT'),
-                        },
-                        'art': {}
-                },
-                              mode='epg',
-                              stream_type='LIVE',
-                              is_folder=False))
 
     addSortMethod(pluginhandle, SORT_METHOD_UNSORTED)
     xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'INDEX')
@@ -1072,15 +1052,6 @@ def run(_pluginurl, _pluginhandle, _pluginquery, addon):
             elif mode == 'drop_fav' and 'favorite_item' in param_keys and 'fav_type' in param_keys:
                 from .submodules.plugin_favorites import drop_favorites
                 drop_favorites(favorite_item=loads(params['favorite_item']), default_icon=default_icon, fav_type=params['fav_type'])
-
-            elif mode == 'epg':
-                from xbmc import getCondVisibility
-                if not getCondVisibility('System.HasAddon(script.module.uepg)'):
-                    executebuiltin(compat._format('InstallAddon({})', 'script.module.uepg'), True)
-                else:
-                    executebuiltin('ActivateWindow(busydialognocancel)')
-                    executebuiltin(compat._format('RunScript(script.module.uepg,{})', get_uepg_params()))
-                    executebuiltin('Dialog.Close(busydialognocancel)')
 
             elif mode == 'show_joyn_bookmarks':
                 from .submodules.plugin_favorites import show_joyn_bookmarks
