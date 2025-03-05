@@ -280,6 +280,16 @@ def index():
     list_items.append(
             get_dir_entry(metadata={
                     'infoLabels': {
+                            'title': xbmc_helper().translation('LIVE_TV_VOD'),
+                    },
+                    'art': {}
+            },
+                          mode='channels',
+                          stream_type='LIVE_VOD'))
+
+    list_items.append(
+            get_dir_entry(metadata={
+                    'infoLabels': {
                             'title': xbmc_helper().translation('TV_SHOWS'),
                             'plot': xbmc_helper().translation('TV_SHOWS_PLOT'),
                     },
@@ -379,28 +389,47 @@ def channels(stream_type, title):
 
         xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'CATEORIES', title)
 
-    elif stream_type == 'LIVE':
+    elif stream_type in ['LIVE', 'LIVE_VOD']:
 
         from .submodules.libjoyn_video import get_video_client_data
-        epg = lib_joyn().get_epg(first=2, use_cache=False)
-        for brand_epg in epg['brands']:
-            if brand_epg['livestream'] is not None:
-                if 'epg' in brand_epg['livestream'].keys() and len(brand_epg['livestream']['epg']) > 0:
-                    metadata = lib_joyn().get_epg_metadata(brand_epg['livestream'])
+        epg = lib_joyn().get_epg(use_cache=False)
+        for brand_epg in epg['liveStreams']:
 
-                    if 'logo' in brand_epg.keys():
-                        metadata['art'].update({
-                                'icon': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_epg['logo']['url']),
-                                'clearlogo': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_epg['logo']['url']),
-                                'thumb': compat._format('{}/profile:original', brand_epg['logo']['url']),
-                        })
+            if stream_type == 'LIVE_VOD' and brand_epg['type'] != 'ON_DEMAND':
+                continue
 
+            if stream_type == 'LIVE' and brand_epg['type'] == 'ON_DEMAND':
+                continue
+
+            brand_epg.update({'licenseTypes': []})
+            for marking in brand_epg['markings']:
+                if marking in ['PREMIUM', 'PLUS']:
+                    brand_epg.get('licenseTypes').append('SVOD')
+                    break
+
+            if isinstance(brand_epg.get('licenseTypes', None), list) and lib_joyn().check_license(brand_epg) is False:
+                continue
+
+            if 'epgEvents' in brand_epg.keys() and len(brand_epg['epgEvents']) > 0:
+                metadata = lib_joyn().get_epg_metadata(brand_epg)
+
+                if brand_epg['type'] == 'ON_DEMAND' and brand_epg['epgEvents'][0].get('program') is not None:
+                    response_item = brand_epg['epgEvents'][0]['program']
+                    list_items.append(
+                            get_dir_entry(is_folder=False,
+                                          mode='play_video',
+                                          movie_id=response_item['id'],
+                                          metadata=metadata,
+                                          video_id=response_item['video']['id'],
+                                          client_data=dumps(get_video_client_data(response_item['video']['id'], 'VOD', response_item)),
+                                          path=response_item['path']))
+                else:
                     list_items.append(
                             get_dir_entry(is_folder=False,
                                           metadata=metadata,
                                           mode='play_video',
-                                          client_data=dumps(get_video_client_data(brand_epg['livestream']['id'], 'LIVE')),
-                                          video_id=brand_epg['livestream']['id'],
+                                          client_data=dumps(get_video_client_data(brand_epg['id'], 'LIVE')),
+                                          video_id=brand_epg['id'],
                                           stream_type='LIVE'))
 
         xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'LIVE_TV', title)

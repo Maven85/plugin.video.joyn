@@ -54,7 +54,7 @@ class lib_joyn(Singleton):
 		return self.node
 
 
-	def get_epg(self, first=30, use_cache=True):
+	def get_epg(self, use_cache=True):
 
 		dt_now = datetime.now()
 		if use_cache is True:
@@ -72,36 +72,21 @@ class lib_joyn(Singleton):
 			return self.epg_cache['epg_data']
 
 		xbmc_helper().log_debug('EPG FROM API')
-		epg_data = self.get_graphql_response(operation='EPG',
-		                                     variables={'first': first},
-		                                     force_cache=False if use_cache is True else True)
+		epg_data = self.get_graphql_response(operation='PlayerLivestreams', force_cache=False if use_cache is True else True)
 		epg = {'epg_data': epg_data, 'epg_expires': None, 'epg_cache_expires': None}
 
-		for brand_epg in epg_data['brands']:
-			if brand_epg.get('livestream', None) is not None:
-				if not isinstance(brand_epg['livestream'].get('epg', None), list):
-					brand_epg['livestream']['epg'] = []
-				brand_live_stream_epg_count = len(brand_epg['livestream']['epg'])
-				if brand_live_stream_epg_count > 0:
-					penultimate_brand_live_stream_epg_timestamp = brand_epg['livestream']['epg'][(brand_live_stream_epg_count -
-					                                                                              2)]['startDate']
-					if epg['epg_expires'] is None or epg['epg_expires'] > penultimate_brand_live_stream_epg_timestamp:
-						epg.update({'epg_expires': penultimate_brand_live_stream_epg_timestamp})
-					if epg['epg_cache_expires'] is None or brand_epg['livestream']['epg'][0]['endDate'] < epg['epg_cache_expires']:
-						epg['epg_cache_expires'] = brand_epg['livestream']['epg'][0]['endDate']
-				else:
-					brand_epg['livestream']['epg'].append({
-					        '__typename':
-					        'EpgEntry',
-					        'startDate':
-					        int(time()),
-					        'endDate':
-					        int(time()) + 36000,
-					        'title':
-					        compat._format(xbmc_helper().translation('NO_INFORMATION_AVAILABLE')),
-					        'secondaryTitle':
-					        compat._format(xbmc_helper().translation('NO_INFORMATION_AVAILABLE'))
-					})
+		for brand_epg in epg_data['liveStreams']:
+			if not isinstance(brand_epg.get('epgEvents', None), list):
+				brand_epg['epgEvents'] = []
+			brand_live_stream_epg_count = len(brand_epg['epgEvents'])
+			if brand_live_stream_epg_count > 0:
+				penultimate_brand_live_stream_epg_timestamp = brand_epg['epgEvents'][(brand_live_stream_epg_count -
+				                                                                              2)]['startDate']
+				if epg['epg_expires'] is None or epg['epg_expires'] > penultimate_brand_live_stream_epg_timestamp:
+					epg.update({'epg_expires': penultimate_brand_live_stream_epg_timestamp})
+				if epg['epg_cache_expires'] is None or brand_epg['epgEvents'][0]['endDate'] < epg['epg_cache_expires']:
+					epg['epg_cache_expires'] = brand_epg['epgEvents'][0]['endDate']
+
 		if use_cache is True:
 			cache.set_pickle('EPG', epg)
 		else:
@@ -241,7 +226,7 @@ class lib_joyn(Singleton):
 			else:
 				params.update({'variables': variables})
 
-		if CONST['GRAPHQL'][operation].get('OPERATION', None) is not None:
+		if CONST['GRAPHQL'][operation].get('OPERATION', None) is not None and CONST['GRAPHQL'][operation].get('HAS_EXTENSIONS', True) is True:
 			params.update({
 			        'operationName': CONST['GRAPHQL'][operation].get('OPERATION'),
 			        'extensions': {
@@ -760,46 +745,70 @@ class lib_joyn(Singleton):
 		        'infoLabels': {},
 		}
 
-		if brand_livestream_epg.get('livestream', {}).get('brand') is not None:
-			brand_title = brand_livestream_epg['livestream']['brand']['title']
-		else:
-			brand_title = brand_livestream_epg['title']
+		brand_title = brand_livestream_epg['title']
 		if 'quality' in brand_livestream_epg and brand_livestream_epg['quality'] == 'HD' and brand_title[-2:] != 'HD':
 			brand_title = compat._format('{} HD', brand_title)
+		if brand_title.lower().startswith('vod playlist'):
+			brand_title = brand_title[brand_title.find(' ', 4):].strip()
+
 		dt_now = datetime.now()
 		epg_metadata['infoLabels'].update({'title': compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, '')})
-
-		if 'epg' in brand_livestream_epg:
-			epg_data = brand_livestream_epg['epg']
-		else:
-			epg_data = [brand_livestream_epg]
+		epg_data = brand_livestream_epg.get('epgEvents') if brand_livestream_epg.get('epgEvents') is not None else []
 
 		for idx, epg_entry in enumerate(epg_data):
 			end_time = xbmc_helper().timestamp_to_datetime(epg_entry['endDate'])
 
 			if end_time is not False and end_time > dt_now:
 				epg_metadata = lib_joyn.get_metadata(epg_entry, 'EPG')
+
+				epg_title = epg_entry.get('title') if epg_entry.get('title') is not None else epg_entry.get('program', {}).get('title')
 				epg_metadata['infoLabels'].update({
-				        'title':
-				        compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, epg_entry['title']),
-				        'tvShowTitle':
-				        epg_entry['title'],
+				         'title':
+				         compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, epg_title),
+				         'tvShowTitle':
+				         epg_title,
 				        'mediatype':
 				        'tvshow'
 				})
 				if len(epg_data) > (idx + 1):
+					next_epg_title = epg_data[idx + 1].get('title') \
+						if epg_data[idx + 1].get('title') is not None \
+						else epg_data[idx + 1].get('program', {}).get('title')
 					epg_metadata['infoLabels'].update({
 					        'plot':
-					        compat._format(xbmc_helper().translation('LIVETV_UNTIL_AND_NEXT'), end_time,
-					                       epg_data[idx + 1]['title'])
+					        compat._format(xbmc_helper().translation('LIVETV_UNTIL_AND_NEXT'), end_time, next_epg_title)
 					})
 				else:
 					epg_metadata['infoLabels'].update({'plot': compat._format(xbmc_helper().translation('LIVETV_UNTIL'), end_time)})
 
-				if epg_entry.get('secondaryTitle', None) is not None:
-					epg_metadata['infoLabels']['plot'] += epg_entry['secondaryTitle']
+				epg_secondary_title = epg_entry.get('secondaryTitle') \
+					if epg_entry.get('secondaryTitle') is not None \
+					else epg_entry.get('program', {}).get('secondaryTitle')
+				if epg_secondary_title is not None:
+					epg_metadata['infoLabels']['plot'] += epg_secondary_title
+
+				if 'images' in epg_entry.get('program', {}) and len(epg_entry['program'].get('images', [])) > 0:
+					epg_metadata['art'].update({
+				        'thumb': compat._format('{}/profile:original', epg_entry['program'].get('images')[0].get('url')),
+					})
+				elif brand_livestream_epg['type'] == 'ON_DEMAND' and epg_entry.get('program', {}).get('posterImage') is not None:
+					epg_metadata['art'].update({
+					        'thumb': compat._format('{}/profile:original', epg_entry['program']['posterImage']['url'][:epg_entry['program']['posterImage']['url'].rfind('/')]),
+					})
 
 				break
+
+		if 'logo' in brand_livestream_epg['brand'].get('livestream', {}).keys():
+			brand_img_url = brand_livestream_epg['brand']['livestream']['logo']['url'][:brand_livestream_epg['brand']['livestream']['logo']['url'].rfind('/')]
+			epg_metadata['art'].update({
+				'icon': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url),
+				'clearlogo': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url)
+		})
+
+		if xbmc_helper().get_bool_setting('highlight_premium') is True and \
+				isinstance(brand_livestream_epg.get('markings', None), list) and \
+				'PREMIUM' in brand_livestream_epg['markings']:
+			epg_metadata['infoLabels'].update({'title': compat._format(xbmc_helper().translation('PLUS_HIGHLIGHT_LABEL'), epg_metadata['infoLabels'].get('title', ''))})
 
 		return epg_metadata
 

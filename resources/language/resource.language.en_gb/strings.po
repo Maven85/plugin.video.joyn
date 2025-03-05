@@ -361,7 +361,7 @@ msgid "Live TV"
 msgstr ""
 
 msgctxt "#30606"
-msgid "TV Guide"
+msgid "VOD channels"
 msgstr ""
 
 msgctxt "#30607"
@@ -381,12 +381,8 @@ msgid "Search in TV Shows"
 msgstr ""
 
 msgctxt "#30611"
-msgid "Watch Live TV with more than 50 channels"
+msgid "Watch over 60 TV channels and current sporting events live"
 msgstr ""
-
-#msgctxt "#30612"
-#msgid ""
-#msgstr ""
 
 msgctxt "#30621"
 msgid "Season {0:s}"
