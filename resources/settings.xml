@@ -51,21 +51,6 @@
 						<close>true</close>
 					</control>
 				</setting>
-				<setting id="uepg_settings" type="action" label="30109" help="">
-					<level>0</level>
-					<data>Addon.OpenSettings(script.module.uepg)</data>
-					<constraints>
-						<allowempty>true</allowempty>
-					</constraints>
-					<dependencies>
-						<dependency type="enable">
-							<condition on="property" name="InfoBool">System.HasAddon(script.module.uepg)</condition>
-						</dependency>
-					</dependencies>
-					<control type="button" format="action">
-						<close>true</close>
-					</control>
-				</setting>
 			</group>
 		</category>
 		<category id="account" label="30352" help="">
