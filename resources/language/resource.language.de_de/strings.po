@@ -349,8 +349,8 @@ msgid "Live TV"
 msgstr "Live TV"
 
 msgctxt "#30606"
-msgid "TV Guide"
-msgstr "TV Programm"
+msgid "VOD channels"
+msgstr "VOD Sender"
 
 msgctxt "#30607"
 msgid "Personal Joyn watchlist"
@@ -369,12 +369,8 @@ msgid "Search in TV Shows"
 msgstr "Suche in Serien"
 
 msgctxt "#30611"
-msgid "Watch Live TV with more than 50 channels"
-msgstr "Live Streams von mehr als 50 Sendern"
-
-#msgctxt "#30612"
-#msgid ""
-#msgstr ""
+msgid "Watch over 60 TV channels and current sporting events live"
+msgstr "Über 60 TV-Sender sowie aktuelle Sportevents live ansehen"
 
 msgctxt "#30621"
 msgid "Season {0:s}"

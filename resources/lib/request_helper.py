@@ -115,7 +115,7 @@ def get_url(url,
         else:
             request = Request(url, headers=headers)
 
-        response = urlopen(request, timeout=40)
+        response = urlopen(request, timeout=60)
 
         if response.info().get('Content-Encoding') == 'gzip':
             response_content = compat._decode(GzipFile(fileobj=BytesIO(response.read())).read())
