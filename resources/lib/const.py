@@ -374,14 +374,14 @@ CONST = {
         'LANDINGPAGECLIENT': {
             'OPERATION': 'LandingPageClient',
             'REQUIRED_VARIABLES': ['path'],
-            'HASH': 'c5d6d01bfcafe8268a248c23eefdf9e40c088d33ad41126c4b52e40de524d55e',
+            'HASH': 'f1043e854ddab4f4586b5503e1ab639a5a0a504b0b938294c0ae754d5105fa08',
         },
 
        'LANDINGBLOCKS': {
             'OPERATION': 'LandingBlocks',
             'REQUIRED_VARIABLES': ['ids'],
             'BOOKMARKS': True,
-            'HASH': 'c3a9300c3c1459f185e966068accf865a991aa22cbe12b3bb730b57744c199bc',
+            'HASH': '6a7d2f01b960029b31a2be3610e21065320d989329aecdb6e026eb5b9ff6e4ea',
         },
 
         'CHANNEL': {
@@ -416,7 +416,7 @@ CONST = {
            'OPERATION': 'SeriesDetailPageStatic',
            'REQUIRED_VARIABLES': ['path', 'licenseFilter'],
            'BOOKMARKS': True,
-           'HASH': '02c011bf9db31495e5abc1dcb6a910955357bcc1e3a3b9ad68d13a3aac5300e1',
+           'HASH': '43cad327eeae12e14dfb629d662ebc947d78b71ec91d972ea1ef46ccdb29eede',
         },
 
         'EPISODES': {
@@ -426,7 +426,14 @@ CONST = {
             'HASH': 'ee2396bb1b7c9f800e5cefd0b341271b7213fceb4ebe18d5a30dab41d703009f',
         },
 
-        'PlayerLivestreams': {
+        'RECENT_EPISODES': {
+            'OPERATION': 'RecentEpisodes',
+            'REQUIRED_VARIABLES': ['id', 'offset'],
+            'BOOKMARKS': True,
+            'HASH': '165df4f031673746960ae3b36a86d3a6249257b26551dd1407fde75056689305',
+        },
+
+        'PLAYER_LIVESTREAMS': {
             'QUERY': '{ liveStreams(filterLivestreamsTypes: [EVENT,LINEAR,ON_DEMAND], first: 5000, offset: 0) { agofCode, brand { brandCode, id, livestream '\
                 '{ logo { url(profile: "nextgen-web-artlogo-183x75") } } }, epgEvents { endDate, program { ... on CompilationItem { __typename, title, ageRating '\
                 '{ descriptorsText, minAge }, licenseTypes, path, productPlacement, thumbnailImage: image(type: PRIMARY) { url(profile: "nextgen-web-episodestillplayer-693x390") }, '\
@@ -467,7 +474,7 @@ CONST = {
         'ACCOUNT': {
             'OPERATION': 'GetAccountInfo',
             'NO_CACHE': True,
-            'HASH': 'c203e4ac81658484155a7a4d51085cdd059f8348c8f683e687cb2749f3b00ea1',
+            'HASH': '78f1300cd10a9fa7850255a3b8a89bbdb481c32022391da26485fba58f5c8d9a',
         },
 
         'LANEBOOKMARK': {

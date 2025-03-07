@@ -500,11 +500,18 @@ def seasons(tv_show_id, title, path):
                     'sortseason': season_number,
             })
 
-            list_items.append(
-                    get_dir_entry(mode='season_episodes',
-                                  season_id=season['id'],
-                                  metadata=tvshow_metadata,
-                                  title_prefix=compat._format('{} - ', title)))
+            if len(seasons['page']['series']['allSeasons']) > 1:
+                list_items.append(
+                        get_dir_entry(mode='season_episodes',
+                                      season_id=season['id'],
+                                      metadata=tvshow_metadata,
+                                      title_prefix=compat._format('{} - ', title)))
+            else:
+                list_items.append(
+                        get_dir_entry(mode='series_episodes',
+                                      tv_show_id=tv_show_id,
+                                      metadata=tvshow_metadata,
+                                      title_prefix=compat._format('{} - ', title)))
             counter += 1
 
     if len(list_items) == 0:
@@ -520,6 +527,59 @@ def seasons(tv_show_id, title, path):
 
     list_items.append(get_favorite_entry({'tv_show_id': tv_show_id, 'path': path}, 'TV_SHOW'))
     xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'SEASONS', title)
+
+
+def series_episodes(tv_show_id, title):
+
+    from .submodules.plugin_favorites import get_favorite_entry
+    list_items = []
+    tv_show_path = None
+    season_id = None
+
+    offset = 0
+    episodes = {}
+    while True:
+        episodes = lib_joyn().get_graphql_response('RECENT_EPISODES', {
+                'id': tv_show_id,
+                'offset': offset
+        })
+
+        override_fanart = default_fanart
+        if episodes is not None and episodes.get('series', None) is not None and isinstance(
+                episodes.get('series').get('episodes', None), list) and len(episodes.get('series').get('episodes')) > 0:
+
+            first_episode = episodes.get('series').get('episodes')[0]
+            if 'series' in first_episode.keys():
+                tvshow_meta = lib_joyn().get_metadata(first_episode['series'], 'TVSHOW')
+                if 'fanart' in tvshow_meta['art']:
+                    override_fanart = tvshow_meta['art']['fanart']
+
+            if tv_show_path is None:
+                tv_show_path = first_episode.get('path').rsplit('/', 1)[0]
+            if season_id is None:
+                season_id = first_episode.get('season').get('id')
+
+            list_items.extend(get_list_items(episodes.get('series').get('episodes'), override_fanart=override_fanart, check_license_type=True))
+
+            offset += 32
+        else:
+            break
+
+    if len(list_items) == 0:
+        from xbmcplugin import endOfDirectory
+        endOfDirectory(handle=pluginhandle, succeeded=False)
+
+        return xbmc_helper().notification(xbmc_helper().translation('SEASON'),
+                                          xbmc_helper().translation('MSG_NO_CONTENT'), default_icon)
+
+    addSortMethod(pluginhandle, SORT_METHOD_UNSORTED)
+    addSortMethod(pluginhandle, SORT_METHOD_LABEL)
+    addSortMethod(pluginhandle, SORT_METHOD_DURATION)
+    addSortMethod(pluginhandle, SORT_METHOD_DATE)
+    addSortMethod(pluginhandle, SORT_METHOD_EPISODE)
+
+    list_items.append(get_favorite_entry({'tv_show_id': tv_show_id, 'tv_show_path': tv_show_path, 'season_id': season_id}, 'SEASON'))
+    xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'EPISODES', title)
 
 
 def season_episodes(season_id, title):
@@ -1015,6 +1075,9 @@ def run(_pluginurl, _pluginhandle, _pluginquery, addon):
 
             if mode == 'season' and 'tv_show_id' in param_keys and 'path' in param_keys:
                 seasons(params['tv_show_id'], title, params['path'])
+
+            elif mode == 'series_episodes' and 'tv_show_id' in param_keys:
+                series_episodes(params['tv_show_id'], title)
 
             elif mode == 'season_episodes' and 'season_id' in param_keys:
                 season_episodes(params['season_id'], title)
