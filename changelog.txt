@@ -1,3 +1,8 @@
+2.5.33
+- chore: removed script.module.uepg
+- chore: refactoring live tv
+- fix: error if the data provided for the duration is null
+- fix: not all episodes are visible for some series
 2.5.32
 - fix: saved credentials cannot be decrypted
 2.5.31
