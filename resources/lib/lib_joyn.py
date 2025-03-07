@@ -72,7 +72,7 @@ class lib_joyn(Singleton):
 			return self.epg_cache['epg_data']
 
 		xbmc_helper().log_debug('EPG FROM API')
-		epg_data = self.get_graphql_response(operation='PlayerLivestreams', force_cache=False if use_cache is True else True)
+		epg_data = self.get_graphql_response(operation='PLAYER_LIVESTREAMS', force_cache=False if use_cache is True else True)
 		epg = {'epg_data': epg_data, 'epg_expires': None, 'epg_cache_expires': None}
 
 		for brand_epg in epg_data['liveStreams']:
