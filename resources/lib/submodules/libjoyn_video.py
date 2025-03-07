@@ -166,7 +166,7 @@ def get_video_client_data(asset_id, stream_type, asset_data={}):
 	elif stream_type == 'LIVE':
 		client_data.update({'channelId': asset_id})
 
-	if 'video' in asset_data.keys() and 'duration' in asset_data['video'].keys():
+	if 'video' in asset_data.keys() and asset_data['video'].get('duration', None) is not None:
 		client_data.update({'duration': (asset_data['video']['duration'] * 1000)})
 
 	if 'genres' in asset_data.keys():
