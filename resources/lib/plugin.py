@@ -440,7 +440,7 @@ def tvshows(channel_id, channel_path, title):
     from .submodules.plugin_favorites import get_favorite_entry
     list_items = []
 
-    first = 50
+    first = 32
     offset = 0
     while True:
         tvshows = lib_joyn().get_graphql_response('CHANNEL', {'path': channel_path, 'first': first, 'offset': offset})
@@ -459,7 +459,7 @@ def tvshows(channel_id, channel_path, title):
 
     addSortMethod(pluginhandle, SORT_METHOD_UNSORTED)
     addSortMethod(pluginhandle, SORT_METHOD_LABEL)
-    list_items = sorted(list_items, key=lambda k: unquote_plus(re_search(r'title=([^&]*)', k[0]).group(1)).upper().replace('[/I]', '').replace('[I]', ''))
+    list_items = sorted(list_items, key=lambda k: unquote_plus(re_search(r'title=([^&]*)', k[0]).group(1)).upper().replace('[/I]', '').replace('[I]', '').replace('[/COLOR]', '').replace('[COLOR BLUE]', ''))
     list_items.append(get_favorite_entry({'channel_id': channel_id, 'channel_path': channel_path}, 'MEDIA_LIBRARY'))
     xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'TV_SHOWS', title)
 
