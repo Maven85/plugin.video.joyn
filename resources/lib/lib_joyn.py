@@ -302,7 +302,7 @@ class lib_joyn(Singleton):
 		from .submodules.libjoyn_auth import get_device_uuid
 
 		client_id_data = xbmc_helper().get_json_data('client_ids')
-		if client_id_data is None or client_id_data.get('client_name', 'android') not in CONST['CLIENT_NAMES']:
+		if anon == True or client_id_data is None or client_id_data.get('client_name', 'android') not in CONST['CLIENT_NAMES']:
 			client_id_data = {
 			        'anon_device_id': get_device_uuid(random=anon),
 			        'client_id': get_device_uuid(prefix='JOYNCLIENTID', random=anon),
