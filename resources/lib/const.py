@@ -472,9 +472,9 @@ CONST = {
         },
 
         'ACCOUNT': {
-            'OPERATION': 'GetAccountInfo',
+            'OPERATION': 'GetMeState',
             'NO_CACHE': True,
-            'HASH': '78f1300cd10a9fa7850255a3b8a89bbdb481c32022391da26485fba58f5c8d9a',
+            'HASH': '18d7d43a02a35574c461f82932012fce225e98223e7f6ab7c9e79dbfe1aa99b4',
         },
 
         'LANEBOOKMARK': {
