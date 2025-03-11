@@ -52,6 +52,9 @@ def get_list_items(response_items,
     response_items = lib_joyn().get_bookmarks(response_items)
 
     for response_item in response_items:
+        if response_item is None:
+            continue
+
         if check_license_type is True and isinstance(response_item.get('licenseTypes', None),
                                                      list) and lib_joyn().check_license(response_item) is False:
             continue
