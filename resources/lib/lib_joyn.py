@@ -481,7 +481,7 @@ class lib_joyn(Singleton):
 				self.epg_cache = None
 
 		# refresh the token at least 30min before it actual expires
-		if force_refresh is True or time() >= self.auth_token_data['created'] + ((self.auth_token_data['expires_in'] / 1000) - 1800):
+		if force_refresh is True or time() >= self.auth_token_data['created'] + (self.auth_token_data['expires_in'] - 1800):
 			xbmc_helper().log_debug("Refreshing auth_token_data")
 			client_id_data = self.get_client_ids()
 
