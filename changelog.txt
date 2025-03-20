@@ -1,3 +1,5 @@
+2.5.35
+- fix: logout doesn't work
 2.5.34
 - fix: content that does not require a login cannot be played
 - fix: not all content is visible in the media libraries
