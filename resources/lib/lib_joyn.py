@@ -797,13 +797,36 @@ class lib_joyn(Singleton):
 					})
 
 				break
+		else:
+			if brand_livestream_epg.get('livestream', {}).get('brand', {}).get('title'):
+				brand_title = brand_livestream_epg.get('livestream', {}).get('brand', {}).get('title')
+			epg_title = brand_livestream_epg.get('title')
+			if epg_title:
+				epg_metadata['infoLabels'].update({
+						'title':
+						compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, epg_title),
+						'tvShowTitle': epg_title
+				})
+			end_time = xbmc_helper().timestamp_to_datetime(brand_livestream_epg['endDate'])
+			if end_time:
+				epg_metadata['infoLabels'].update({'plot': compat._format(xbmc_helper().translation('LIVETV_UNTIL'), end_time)})
+			epg_secondary_title = brand_livestream_epg.get('secondaryTitle')
+			if epg_secondary_title:
+				epg_metadata['infoLabels']['plot'] += epg_secondary_title
+				epg_metadata['infoLabels'].update({
+						'tvShowTitle': epg_secondary_title
+				})
+			epg_metadata['infoLabels'].update({
+						'mediatype':
+						'tvshow'
+			})
 
-		if 'logo' in brand_livestream_epg['brand'].get('livestream', {}).keys():
-			brand_img_url = brand_livestream_epg['brand']['livestream']['logo']['url'][:brand_livestream_epg['brand']['livestream']['logo']['url'].rfind('/')]
-			epg_metadata['art'].update({
-				'icon': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url),
-				'clearlogo': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url)
-		})
+			if 'logo' in brand_livestream_epg.get('livestream', {}).get('brand', {}).keys():
+				brand_img_url = brand_livestream_epg['livestream']['brand']['logo']['url'][:brand_livestream_epg['livestream']['brand']['logo']['url'].rfind('/')]
+				epg_metadata['art'].update({
+					'icon': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url),
+					'clearlogo': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url)
+			})
 
 		if xbmc_helper().get_bool_setting('highlight_premium') is True and \
 				isinstance(brand_livestream_epg.get('markings', None), list) and \
