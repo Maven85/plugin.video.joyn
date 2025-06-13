@@ -374,14 +374,14 @@ CONST = {
         'LANDINGPAGECLIENT': {
             'OPERATION': 'LandingPageClient',
             'REQUIRED_VARIABLES': ['path'],
-            'HASH': 'f1043e854ddab4f4586b5503e1ab639a5a0a504b0b938294c0ae754d5105fa08',
+            'HASH': 'bcd4468a3b6851cc09321b37ce8866ccf892859780ca7cf03fd8841d5a0f49ed',
         },
 
        'LANDINGBLOCKS': {
             'OPERATION': 'LandingBlocks',
             'REQUIRED_VARIABLES': ['ids'],
             'BOOKMARKS': True,
-            'HASH': '6a7d2f01b960029b31a2be3610e21065320d989329aecdb6e026eb5b9ff6e4ea',
+            'HASH': 'bd421dd41dd88aa826bd7193de779960ad3fe7c75eef8047b13ba49072a56855',
         },
 
         'CHANNEL': {
