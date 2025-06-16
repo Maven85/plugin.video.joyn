@@ -1,3 +1,6 @@
+2.5.37
+- fix: remove duplicate condition for CollectionLane in categories function
+- fix: update view settings to use 'Custom' instead of numeric values
 2.5.36
 - fix: enhance EPG metadata handling for livestream branding
 - chore: updated hashes
