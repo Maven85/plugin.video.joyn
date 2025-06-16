@@ -696,8 +696,6 @@ def categories(title, path, return_list_items=False):
             viewtype = 'TV_SHOWS'
             if block.get('__typename') == 'CollectionLane':
                 viewtype = 'CATEORIES'
-            elif block.get('__typename') == 'CollectionLane':
-                viewtype = 'CATEORIES'
             elif block.get('__typename') == 'LiveLane':
                 viewtype = 'LIVE_TV'
 
