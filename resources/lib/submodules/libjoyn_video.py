@@ -61,7 +61,7 @@ def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=
 	                                 data=entitlement_request_data,
 	                                 additional_headers=entitlement_request_headers,
 	                                 no_cache=True,
-	                                 return_json_errors=['ENT_PINRequired', 'ENT_PINInvalid', 'INVALID_JWT', 'ENT_RVOD_Playback_Restricted'])
+	                                 return_json_errors=['ENT_PINRequired', 'ENT_PINInvalid', 'INVALID_JWT', 'ENT_RVOD_Playback_Restricted', 'ENT_VALIDATION_TOKEN_ERROR'])
 	xbmc_helper().log_debug('entitlement_response = {}', entitlement_response)
 	if isinstance(entitlement_response, dict) and 'json_errors' in entitlement_response:
 		if 'ENT_PINInvalid' in entitlement_response['json_errors']:
@@ -87,6 +87,12 @@ def get_entitlement_data(video_id, stream_type, pin_required=False, invalid_pin=
 			                            pin_required=pin_required,
 			                            invalid_pin=invalid_pin,
 			                            reset_anon=True)
+		elif 'ENT_VALIDATION_TOKEN_ERROR' in entitlement_response['json_errors']:
+			return get_entitlement_data(video_id=video_id,
+			                            stream_type=stream_type,
+			                            pin_required=pin_required,
+			                            invalid_pin=invalid_pin,
+			                            force_refresh_token=True)
 
 	return entitlement_response
 
