@@ -1,3 +1,5 @@
+2.5.38
+- fix: add handling for ENT_VALIDATION_TOKEN_ERROR in entitlement data retrieval
 2.5.37
 - fix: remove duplicate condition for CollectionLane in categories function
 - fix: update view settings to use 'Custom' instead of numeric values
