@@ -875,6 +875,9 @@ class lib_joyn(Singleton):
 		if self.get_auth_token().get('has_account', False) is not False:
 			ids = []
 			for item in items:
+				if not item:
+					continue
+
 				if item['__typename'] in ['Movie', 'Episode']:
 					ids.append(item.get('id'))
 
@@ -902,6 +905,9 @@ class lib_joyn(Singleton):
 
 			if len(bookmarks_list) > 0:
 				for item in items:
+					if not item:
+						continue
+
 					if item['__typename'] in ['Movie', 'Series', 'Compilation']:
 						item.update({'isBookmarked': item['id'] in bookmarks_list})
 

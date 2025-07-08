@@ -52,7 +52,7 @@ def get_list_items(response_items,
     response_items = lib_joyn().get_bookmarks(response_items)
 
     for response_item in response_items:
-        if response_item is None:
+        if not response_item:
             continue
 
         if check_license_type is True and isinstance(response_item.get('licenseTypes', None),
@@ -660,13 +660,20 @@ def get_compilation_items(compilation_id, compilation_path, title):
 def search(stream_type, title, search_term=''):
 
     if len(search_term) != 0:
+        list_items = []
+        first = 32
+        offset = 0
         xbmc_helper().log_debug('Search term: {}', search_term)
-        search_response = lib_joyn().get_graphql_response('SEARCH', {'text': search_term})
-        if 'search' in search_response.keys() and 'results' in search_response['search'] and len(
-                search_response['search']['results']) > 0:
+        while True:
+            search_response = lib_joyn().get_graphql_response('SEARCH', {'text': search_term, 'first': first, 'offset': offset})
+            if 'search' in search_response.keys() and 'results' in search_response['search'] and len(
+                    search_response['search']['results']) > 0:
+                list_items.extend(get_list_items(search_response['search']['results'], override_fanart=default_fanart))
+                offset += first
+            else:
+                break;
 
-            return xbmc_helper().set_folder(get_list_items(search_response['search']['results'], override_fanart=default_fanart),
-                                            pluginurl, pluginhandle, pluginquery, 'TV_SHOWS', title)
+        return xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'TV_SHOWS', title)
     else:
         _search_term = Dialog().input(xbmc_helper().translation('SEARCH'), type=INPUT_ALPHANUM)
         search_response = lib_joyn().get_graphql_response('SEARCH', {'text': _search_term})
