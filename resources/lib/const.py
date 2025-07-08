@@ -465,10 +465,10 @@ CONST = {
 
         'SEARCH': {
             'OPERATION': 'SearchQ',
-            'REQUIRED_VARIABLES': ['text'],
+            'REQUIRED_VARIABLES': ['text', 'first', 'offset'],
             'NO_CACHE': True,
             'BOOKMARKS': True,
-            'HASH': '8090ccb2a0eeed97f306a7157a818d8e14195ddf1aad71076144b03afe92fcdc',
+            'HASH': 'bb2bab6cbe17321d7eddd5006e7f40765faedd79790b193a59d83f4640694856',
         },
 
         'ACCOUNT': {
