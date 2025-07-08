@@ -1,3 +1,5 @@
+2.5.39
+- fix: update search functionality to include pagination and handle empty items
 2.5.38
 - fix: add handling for ENT_VALIDATION_TOKEN_ERROR in entitlement data retrieval
 2.5.37
