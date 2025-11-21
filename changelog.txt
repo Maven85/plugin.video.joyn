@@ -1,3 +1,5 @@
+2.5.40
+- chore: updated hashes
 2.5.39
 - fix: update search functionality to include pagination and handle empty items
 2.5.38
