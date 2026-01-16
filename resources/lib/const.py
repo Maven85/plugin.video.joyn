@@ -413,10 +413,10 @@ CONST = {
         },
 
         'SEASONS': {
-           'OPERATION': 'SeriesDetailPageStatic',
+           'OPERATION': 'SeriesDetailNewPageStatic',
            'REQUIRED_VARIABLES': ['path', 'licenseFilter'],
            'BOOKMARKS': True,
-           'HASH': '43cad327eeae12e14dfb629d662ebc947d78b71ec91d972ea1ef46ccdb29eede',
+           'HASH': '1680c2c8c458a4c156d961af2da86c80166d58dc0d96c48911eef3155352722b',
         },
 
         'EPISODES': {
