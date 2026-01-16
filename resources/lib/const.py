@@ -22,7 +22,7 @@ CONST = {
                      'NDIzNTQzMzczODMzMzgzNjM2MzMzNQ==',
 
     'PRELOAD_JS_CONFIGS': {
-        'API_GW_API_KEY': r'API_GW_API_KEY.*?value:"(.*?)"',
+        'API_GW_API_KEY': r'API_GW_API_KEY.{0,2}?value:"(.*?)"',
     },
     'CHUNKS_JS_CONFIGS': {
         'PLAYERCONFIG_URL': 'https://playerconfig.*?.json',

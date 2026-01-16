@@ -93,7 +93,7 @@ def create_config(cached_config, addon_version):
 	do_break = False
 	found_configs = 0
 	parsed_preload_js_url = None
-	preload_scripts = list(reversed(findall(r'<script.*?src="(.*?)"', html_content)))
+	preload_scripts = list(findall(r'<script.*?src="(.*?)"', html_content))
 	for preload_js_url in preload_scripts:
 		try:
 			if not preload_js_url.startswith('http'):
