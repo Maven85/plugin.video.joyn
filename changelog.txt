@@ -1,3 +1,6 @@
+2.5.41
+- fix: update regex for API key
+- chore: update operation name and hash for seasons
 2.5.40
 - chore: updated hashes
 2.5.39
