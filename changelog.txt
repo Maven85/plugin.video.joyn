@@ -1,3 +1,7 @@
+2.5.42
+- chore: updated hashes
+- fix: ensure response item ID is present before appending to list
+- fix: add checks for livestream presence
 2.5.41
 - fix: update regex for API key
 - chore: update operation name and hash for seasons
