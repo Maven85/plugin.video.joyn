@@ -433,7 +433,7 @@ CONST = {
             'HASH': '165df4f031673746960ae3b36a86d3a6249257b26551dd1407fde75056689305',
         },
 
-        'LIVECHANNELS_AND_EPG': {
+        'PLAYER_LIVESTREAMS': {
             'QUERY': '{ liveStreams(filterLivestreamsTypes: [EVENT,LINEAR,ON_DEMAND], first: 5000, offset: 0) { agofCode, brand { brandCode, id, livestream '\
                 '{ logo { url(profile: "nextgen-web-artlogo-183x75") } } }, epgEvents { endDate, program { ... on CompilationItem { __typename, title, ageRating '\
                 '{ descriptorsText, minAge }, licenseTypes, path, productPlacement, thumbnailImage: image(type: PRIMARY) { url(profile: "nextgen-web-episodestillplayer-693x390") }, '\
