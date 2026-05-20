@@ -374,14 +374,14 @@ CONST = {
         'LANDINGPAGECLIENT': {
             'OPERATION': 'LandingPageClient',
             'REQUIRED_VARIABLES': ['path'],
-            'HASH': 'd126aa8da9aae9a7abdabe014e8641ce54c17fd0a39c37f8a7bbcab258821508',
+            'HASH': 'b71b3871aebfe266b63a4bf7daaa35645e17be2469b850265ba75146fa60affc',
         },
 
        'LANDINGBLOCKS': {
             'OPERATION': 'LandingBlocks',
             'REQUIRED_VARIABLES': ['ids'],
             'BOOKMARKS': True,
-            'HASH': 'f58e2f338ac69ea879e2b3bc7ba6ef4329a8820b77f5af36fdcc4ebda2132871',
+            'HASH': '1655591f83b0dc1508ad4d52c5f37f72d410f48ad08c3e5f2de8622f86a21c68',
         },
 
         'CHANNEL': {
@@ -395,28 +395,28 @@ CONST = {
             'OPERATION': 'PageCollectionsDetail',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': 'f700a30ceee32ea9ad245002e4ed5bf236bf54455608592a3ee1ecef5fffbe0e',
+            'HASH': 'bf3a273afa54de5a577de160cc82e55824b0e92c87c8bb0b470087eedaeb7c18',
         },
 
         'COMPILATION': {
             'OPERATION': 'CompilationDetailPageStatic',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '3b3b775e712e3f81f6a7b6e3b453da6ffac1bcf2a1fa1e702348bc00d3abe2a0',
+            'HASH': 'f4103ea8a4ebecaf873e439029ea8e8e478031596097808596e7053b5618cae4',
         },
 
         'MOVIES': {
             'OPERATION': 'PageMovieDetailStatic',
             'REQUIRED_VARIABLES': ['path'],
             'BOOKMARKS': True,
-            'HASH': '26bd3a883c1b619572ea914a11f40c3cddd01bc140d8d58cefbe5291b5916b51',
+            'HASH': '9ae6bcd8c45a5e350438d1cc415a022fe053e938c93438509f60ae3abb425fa7',
         },
 
         'SEASONS': {
            'OPERATION': 'SeriesDetailNewPageStatic',
            'REQUIRED_VARIABLES': ['path', 'licenseFilter'],
            'BOOKMARKS': True,
-           'HASH': '1680c2c8c458a4c156d961af2da86c80166d58dc0d96c48911eef3155352722b',
+           'HASH': 'e867452d17ef36e5c077db5cdcad7563a9aebede497c24ac8fae779723bc462d',
         },
 
         'EPISODES': {
@@ -433,7 +433,7 @@ CONST = {
             'HASH': '165df4f031673746960ae3b36a86d3a6249257b26551dd1407fde75056689305',
         },
 
-        'PLAYER_LIVESTREAMS': {
+        'LIVECHANNELS_AND_EPG': {
             'QUERY': '{ liveStreams(filterLivestreamsTypes: [EVENT,LINEAR,ON_DEMAND], first: 5000, offset: 0) { agofCode, brand { brandCode, id, livestream '\
                 '{ logo { url(profile: "nextgen-web-artlogo-183x75") } } }, epgEvents { endDate, program { ... on CompilationItem { __typename, title, ageRating '\
                 '{ descriptorsText, minAge }, licenseTypes, path, productPlacement, thumbnailImage: image(type: PRIMARY) { url(profile: "nextgen-web-episodestillplayer-693x390") }, '\
