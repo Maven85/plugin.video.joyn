@@ -798,7 +798,7 @@ class lib_joyn(Singleton):
 
 				break
 		else:
-			if brand_livestream_epg.get('livestream', {}).get('brand', {}).get('title'):
+			if brand_livestream_epg.get('livestream') and brand_livestream_epg.get('livestream', {}).get('brand', {}).get('title'):
 				brand_title = brand_livestream_epg.get('livestream', {}).get('brand', {}).get('title')
 			epg_title = brand_livestream_epg.get('title')
 			if epg_title:
@@ -821,7 +821,7 @@ class lib_joyn(Singleton):
 						'tvshow'
 			})
 
-			if 'logo' in brand_livestream_epg.get('livestream', {}).get('brand', {}).keys():
+			if brand_livestream_epg.get('livestream') and 'logo' in brand_livestream_epg.get('livestream', {}).get('brand', {}).keys():
 				brand_img_url = brand_livestream_epg['livestream']['brand']['logo']['url'][:brand_livestream_epg['livestream']['brand']['logo']['url'].rfind('/')]
 				epg_metadata['art'].update({
 					'icon': compat._format('{}/profile:nextgen-web-artlogo-183x75', brand_img_url),
