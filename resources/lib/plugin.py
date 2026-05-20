@@ -418,14 +418,15 @@ def channels(stream_type, title):
 
                 if brand_epg['type'] == 'ON_DEMAND' and brand_epg['epgEvents'][0].get('program') is not None:
                     response_item = brand_epg['epgEvents'][0]['program']
-                    list_items.append(
-                            get_dir_entry(is_folder=False,
-                                          mode='play_video',
-                                          movie_id=response_item['id'],
-                                          metadata=metadata,
-                                          video_id=response_item['video']['id'],
-                                          client_data=dumps(get_video_client_data(response_item['video']['id'], 'VOD', response_item)),
-                                          path=response_item['path']))
+                    if response_item.get('id') is not None:
+                        list_items.append(
+                                get_dir_entry(is_folder=False,
+                                              mode='play_video',
+                                              movie_id=response_item['id'],
+                                              metadata=metadata,
+                                              video_id=response_item['video']['id'],
+                                              client_data=dumps(get_video_client_data(response_item['video']['id'], 'VOD', response_item)),
+                                              path=response_item['path']))
                 else:
                     list_items.append(
                             get_dir_entry(is_folder=False,
