@@ -1,3 +1,6 @@
+2.5.44
+- fix: update landingpage path
+- fix: add destribution tenant to GraphQL headers based on country
 2.5.43
 - fix: VOD channels and LiveTV
 2.5.42
