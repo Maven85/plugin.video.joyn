@@ -120,9 +120,11 @@ def create_config(cached_config, addon_version):
 		use_outdated_cached_config = True
 
 	if use_outdated_cached_config is False:
+		tenant_suffix = '_AT' if config['country'].lower() == 'at' else '_CH' if config['country'].lower() == 'ch' else ''
 		config['GRAPHQL_HEADERS'] = [('x-api-key', config['API_GW_API_KEY']),
 		                             ('Joyn-Platform', xbmc_helper().get_text_setting('joyn_platform')),
-		                             ('Joyn-Country', config['country'])]
+		                             ('Joyn-Country', config['country']),
+		                             ('Joyn-Distribution-Tenant', f"JOYN{tenant_suffix}")]
 
 	config['CLIENT_NAME'] = xbmc_helper().get_text_setting('joyn_platform')
 
