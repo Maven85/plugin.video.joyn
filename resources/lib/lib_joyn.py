@@ -95,10 +95,11 @@ class lib_joyn(Singleton):
 		return epg_data
 
 
-	def get_landingpage(self, path='/'):
+	def get_landingpage(self, path='/neu-beliebt'):
 
 		if path not in self.landingpage:
-			self.landingpage.update({path: self.get_graphql_response('LANDINGPAGECLIENT', {'path': path})})
+			lp = self.get_graphql_response('LANDINGPAGECLIENT', {'path': path})
+			self.landingpage.update({path: lp})
 
 		return self.landingpage[path]
 
