@@ -124,7 +124,7 @@ def create_config(cached_config, addon_version):
 		config['GRAPHQL_HEADERS'] = [('x-api-key', config['API_GW_API_KEY']),
 		                             ('Joyn-Platform', xbmc_helper().get_text_setting('joyn_platform')),
 		                             ('Joyn-Country', config['country']),
-		                             ('Joyn-Distribution-Tenant', f"JOYN{tenant_suffix}")]
+		                             ('Joyn-Distribution-Tenant', f'JOYN{tenant_suffix}')]
 
 	config['CLIENT_NAME'] = xbmc_helper().get_text_setting('joyn_platform')
 
