@@ -1,3 +1,6 @@
+2.5.45
+- fix: update string formatting
+- fix: update landingpage URL for joyn bookmarks
 2.5.44
 - fix: update landingpage path
 - fix: add destribution tenant to GraphQL headers based on country
