@@ -304,7 +304,7 @@ def show_joyn_bookmarks(title, pluginurl, pluginhandle, pluginquery, default_ico
 
 	list_items = []
 
-	landingpage = deepcopy(lib_joyn().get_landingpage())
+	landingpage = deepcopy(lib_joyn().get_landingpage('/fuer-dich'))
 
 	blocks = landingpage.get('page').get('blocks')
 	blocks.extend(landingpage.get('page').get('lazyBlocks'))
