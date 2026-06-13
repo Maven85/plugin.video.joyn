@@ -538,6 +538,7 @@ def series_episodes(tv_show_id, title):
 
     from .submodules.plugin_favorites import get_favorite_entry
     list_items = []
+    override_fanart = default_fanart
     tv_show_path = None
     season_id = None
 
@@ -549,12 +550,11 @@ def series_episodes(tv_show_id, title):
                 'offset': offset
         })
 
-        override_fanart = default_fanart
         if episodes is not None and episodes.get('series', None) is not None and isinstance(
                 episodes.get('series').get('episodes', None), list) and len(episodes.get('series').get('episodes')) > 0:
 
             first_episode = episodes.get('series').get('episodes')[0]
-            if 'series' in first_episode.keys():
+            if override_fanart == default_fanart and 'series' in first_episode.keys():
                 tvshow_meta = lib_joyn().get_metadata(first_episode['series'], 'TVSHOW')
                 if 'fanart' in tvshow_meta['art']:
                     override_fanart = tvshow_meta['art']['fanart']
@@ -591,22 +591,35 @@ def season_episodes(season_id, title):
 
     from .submodules.plugin_favorites import get_favorite_entry
     list_items = []
-
-    episodes = lib_joyn().get_graphql_response('EPISODES', {
-            'id': season_id,
-            'licenseFilter': 'ALL',
-    })
     override_fanart = default_fanart
-    if episodes is not None and episodes.get('season', None) is not None and isinstance(
-            episodes.get('season').get('episodes', None), list) and len(episodes.get('season').get('episodes')) > 0:
+    tv_show_path = None
 
-        first_episode = episodes.get('season').get('episodes')[0]
-        if 'series' in first_episode.keys():
-            tvshow_meta = lib_joyn().get_metadata(first_episode['series'], 'TVSHOW')
-            if 'fanart' in tvshow_meta['art']:
-                override_fanart = tvshow_meta['art']['fanart']
+    offset = 0
+    episodes = {}
+    while True:
+        episodes = lib_joyn().get_graphql_response('EPISODES', {
+                'id': season_id,
+                'licenseFilter': 'ALL',
+                'offset': offset
+        })
 
-        list_items = get_list_items(episodes.get('season').get('episodes'), override_fanart=override_fanart, check_license_type=True)
+        if episodes is not None and episodes.get('season', None) is not None and isinstance(
+                episodes.get('season').get('episodes', None), list) and len(episodes.get('season').get('episodes')) > 0:
+
+            first_episode = episodes.get('season').get('episodes')[0]
+            if override_fanart == default_fanart and 'series' in first_episode.keys():
+                tvshow_meta = lib_joyn().get_metadata(first_episode['series'], 'TVSHOW')
+                if 'fanart' in tvshow_meta['art']:
+                    override_fanart = tvshow_meta['art']['fanart']
+
+            if tv_show_path is None:
+                tv_show_path = first_episode.get('path').rsplit('/', 1)[0]
+
+            list_items.extend(get_list_items(episodes.get('season').get('episodes'), override_fanart=override_fanart, check_license_type=True))
+
+            offset += 32
+        else:
+            break
 
     if len(list_items) == 0:
         from xbmcplugin import endOfDirectory
@@ -621,7 +634,7 @@ def season_episodes(season_id, title):
     addSortMethod(pluginhandle, SORT_METHOD_DATE)
     addSortMethod(pluginhandle, SORT_METHOD_EPISODE)
 
-    list_items.append(get_favorite_entry({'season_id': season_id, 'tv_show_path': episodes.get('season').get('episodes')[0].get('path').rsplit('/', 1)[0]}, 'SEASON'))
+    list_items.append(get_favorite_entry({'season_id': season_id, 'tv_show_path': tv_show_path}, 'SEASON'))
     xbmc_helper().set_folder(list_items, pluginurl, pluginhandle, pluginquery, 'EPISODES', title)
 
 
