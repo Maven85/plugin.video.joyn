@@ -1,3 +1,5 @@
+2.5.46
+- fix: improve episode fetching logic in season_episodes
 2.5.45
 - fix: update string formatting
 - fix: update landingpage URL for joyn bookmarks
