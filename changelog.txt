@@ -1,3 +1,5 @@
+2.5.47
+- fix: enhance EPG title handling and add fallback messages
 2.5.46
 - fix: improve episode fetching logic in season_episodes
 2.5.45
