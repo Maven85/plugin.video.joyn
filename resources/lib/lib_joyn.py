@@ -762,7 +762,11 @@ class lib_joyn(Singleton):
 			if end_time is not False and end_time > dt_now:
 				epg_metadata = lib_joyn.get_metadata(epg_entry, 'EPG')
 
-				epg_title = epg_entry.get('title') if epg_entry.get('title') is not None else epg_entry.get('program', {}).get('title')
+				epg_title = epg_entry.get('title') \
+					if epg_entry.get('title') is not None \
+					else epg_entry.get('program').get('title') \
+					if epg_entry.get('program') is not None \
+					else 'Keine Programminformation verfügbar'
 				epg_metadata['infoLabels'].update({
 				         'title':
 				         compat._format(xbmc_helper().translation('LIVETV_TITLE'), brand_title, epg_title),
@@ -774,7 +778,9 @@ class lib_joyn(Singleton):
 				if len(epg_data) > (idx + 1):
 					next_epg_title = epg_data[idx + 1].get('title') \
 						if epg_data[idx + 1].get('title') is not None \
-						else epg_data[idx + 1].get('program', {}).get('title')
+						else epg_data[idx + 1].get('program').get('title') \
+						if epg_data[idx + 1].get('program') is not None \
+						else 'Keine Programminformation verfügbar'
 					epg_metadata['infoLabels'].update({
 					        'plot':
 					        compat._format(xbmc_helper().translation('LIVETV_UNTIL_AND_NEXT'), end_time, next_epg_title)
@@ -784,15 +790,17 @@ class lib_joyn(Singleton):
 
 				epg_secondary_title = epg_entry.get('secondaryTitle') \
 					if epg_entry.get('secondaryTitle') is not None \
-					else epg_entry.get('program', {}).get('secondaryTitle')
+					else epg_entry.get('program').get('secondaryTitle') \
+					if epg_entry.get('program') is not None \
+					else 'Keine Programminformation verfügbar'
 				if epg_secondary_title is not None:
 					epg_metadata['infoLabels']['plot'] += epg_secondary_title
 
-				if 'images' in epg_entry.get('program', {}) and len(epg_entry['program'].get('images', [])) > 0:
+				if epg_entry.get('program', {}) is not None and 'images' in epg_entry.get('program') and len(epg_entry['program'].get('images', [])) > 0:
 					epg_metadata['art'].update({
 				        'thumb': compat._format('{}/profile:original', epg_entry['program'].get('images')[0].get('url')),
 					})
-				elif brand_livestream_epg['type'] == 'ON_DEMAND' and epg_entry.get('program', {}).get('posterImage') is not None:
+				elif brand_livestream_epg['type'] == 'ON_DEMAND' and epg_entry.get('program') is not None and epg_entry.get('program').get('posterImage') is not None:
 					epg_metadata['art'].update({
 					        'thumb': compat._format('{}/profile:original', epg_entry['program']['posterImage']['url'][:epg_entry['program']['posterImage']['url'].rfind('/')]),
 					})
